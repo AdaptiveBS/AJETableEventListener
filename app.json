@@ -1,0 +1,41 @@
+{
+    "id": "09721c13-88b9-4b41-bb44-745859132996",
+    "name": "Table Event Listener",
+    "publisher": "Adaptive Business Solutions Inc",
+    "version": "1.0.0.0",
+    "brief": "Table Event Listener",
+    "description": "Table Event Listener Description",
+    "privacyStatement": "https://justjewelrysoftware.com/contactus",
+    "EULA": "https://justjewelrysoftware.com/contactus",
+    "help": "https://justjewelrysoftware.com/contactus",
+    "url": "https://justjewelrysoftware.com/contactus",
+    "contextSensitiveHelpUrl": "https://justjewelrysoftware.com/contactus",
+    "logo": "Resources/App.png",
+    "dependencies":  [],
+    "platform": "22.0.0.0",
+    "application": "22.0.0.0",
+    "idRanges":  [
+        {
+            "from": 50100,
+            "to": 50110
+        }
+    ],
+    "resourceExposurePolicy": {
+        "allowDebugging": true,
+        "allowDownloadingSource": true,
+        "includeSourceInSymbolFile": true
+    },
+    "target": "Cloud",
+    "supportedLocales": [
+        "en-US"
+    ],
+    "runtime": "11.0",
+    "features": [
+        "TranslationFile"
+    ],
+    "suppressWarnings": [
+        "AA0217",
+        "AS0103"
+    ],
+    "applicationInsightsConnectionString": "InstrumentationKey=685359a3-9879-48ea-a61a-689a0546eafd;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
+}
