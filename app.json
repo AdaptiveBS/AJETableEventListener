@@ -11,9 +11,22 @@
     "url": "https://justjewelrysoftware.com/contactus",
     "contextSensitiveHelpUrl": "https://justjewelrysoftware.com/contactus",
     "logo": "Resources/App.png",
-    "dependencies":  [],
-    "platform": "22.0.0.0",
-    "application": "22.0.0.0",
+    "dependencies":  [
+        {
+            "id":  "5d86850b-0d76-4eca-bd7b-951ad998e997",
+            "name":  "Tests-TestLibraries",
+            "publisher":  "Microsoft",
+            "version":  "23.0.0.0"
+        },
+        {
+            "id":  "23de40a6-dfe8-4f80-80db-d70f83ce8caf",
+            "name":  "Test Runner",
+            "publisher":  "Microsoft",
+            "version":  "23.0.0.0"
+        }        
+    ],
+    "platform": "23.0.0.0",
+    "application": "23.0.0.0",
     "idRanges":  [
         {
             "from": 50100,
@@ -29,13 +42,13 @@
     "supportedLocales": [
         "en-US"
     ],
-    "runtime": "11.0",
+    "runtime": "12.0",
     "features": [
         "TranslationFile"
     ],
     "suppressWarnings": [
-        "AA0217",
-        "AS0103"
+        "AA0218",
+        "AS0084"
     ],
     "applicationInsightsConnectionString": "InstrumentationKey=685359a3-9879-48ea-a61a-689a0546eafd;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
 }
