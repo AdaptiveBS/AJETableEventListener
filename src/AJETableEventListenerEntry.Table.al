@@ -74,6 +74,18 @@ table 50101 "AJE Table Event Listener Entry"
         OutStream.Write(GetCurrCallStack());
     end;
 
+    /// <summary>
+    /// ShowCallStack.
+    /// </summary>
+    procedure ShowCallStack()
+    var
+        CallStack: Text;
+    begin
+        CallStack := GetCallStack();
+        if CallStack <> '' then
+            Message(CallStack);
+    end;
+
     local procedure GetCurrCallStack() CallStack: Text;
     var
         SubString: Text;
@@ -90,17 +102,5 @@ table 50101 "AJE Table Event Listener Entry"
     begin
         // Throw an error to get the call stack by GetLastErrorCallstack
         Error('');
-    end;
-
-    /// <summary>
-    /// ShowCallStack.
-    /// </summary>
-    procedure ShowCallStack()
-    var
-        CallStack: Text;
-    begin
-        CallStack := GetCallStack();
-        if CallStack <> '' then
-            Message(CallStack);
     end;
 }

@@ -5,10 +5,10 @@ page 50100 "AJE Table Event Listener"
 {
     ApplicationArea = All;
     Caption = 'Table Event Listener';
-    PageType = ListPlus;
+    DataCaptionExpression = Rec.Name;
+    PageType = List;
     SourceTable = "AJE Table Event Listener Setup";
     UsageCategory = Administration;
-    DataCaptionExpression = Rec.Name;
 
     layout
     {
@@ -19,8 +19,8 @@ page 50100 "AJE Table Event Listener"
                 Caption = 'Setup';
                 field(Listed; Listen)
                 {
-                    Caption = 'Listen';
                     ApplicationArea = All;
+                    Caption = 'Listen';
                     trigger OnValidate()
                     begin
                         AJETableEventListener.Activate(Listen);
@@ -76,9 +76,9 @@ page 50100 "AJE Table Event Listener"
                 Caption = 'Refresh entries';
                 Image = RefreshLines;
                 Promoted = true;
-                PromotedOnly = true;
-                PromotedIsBig = true;
                 PromotedCategory = Process;
+                PromotedIsBig = true;
+                PromotedOnly = true;
 
                 trigger OnAction()
                 begin

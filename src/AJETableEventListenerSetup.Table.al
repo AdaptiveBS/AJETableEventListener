@@ -15,10 +15,10 @@ table 50100 "AJE Table Event Listener Setup"
         }
         field(2; Name; Text[30])
         {
+            CalcFormula = lookup(AllObjWithCaption."Object Name" where("Object Type" = CONST(Table), "Object ID" = field("Table ID")));
             Caption = 'Name';
             Editable = false;
             FieldClass = FlowField;
-            CalcFormula = lookup(AllObjWithCaption."Object Name" where("Object Type" = CONST(Table), "Object ID" = field("Table ID")));
         }
         field(3; OnInsert; Boolean)
         {
