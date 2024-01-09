@@ -2,11 +2,11 @@ tableextension 50102 AJETestResultRunNo extends "CAL Test Result"
 {
     fields
     {
-        field(50100; "AJE Test Run No."; Integer)
+        field(50100; "AJE Listener Test Run No."; Integer)
         {
-            Caption = 'Test Run No.';
+            Caption = 'Listener Test Run No.';
             Editable = false;
-            TableRelation = "AJE Test Run"."No.";
+            TableRelation = "AJE Listener Test Run"."No.";
         }
     }
 }

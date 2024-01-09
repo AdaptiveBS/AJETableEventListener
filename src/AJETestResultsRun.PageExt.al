@@ -4,10 +4,9 @@ pageextension 50106 AJETestResultsRun extends "CAL Test Results"
     {
         addafter(Result)
         {
-            field(AJEStoredRecords; Rec."AJE Test Run No.")
+            field(AJEListenerTestRun; Rec."AJE Listener Test Run No.")
             {
                 ApplicationArea = All;
-                Caption = 'Test Run No.';
             }
         }
     }

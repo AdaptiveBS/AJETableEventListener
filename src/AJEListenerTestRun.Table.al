@@ -1,4 +1,4 @@
-table 50105 "AJE Test Run"
+table 50105 "AJE Listener Test Run"
 {
     fields
     {
