@@ -9,6 +9,7 @@ codeunit 50100 "AJE Table Event Listener"
     var
         TempAJETableEventListenerEntry: Record "AJE Table Event Listener Entry" temporary;
         AJETableEventListenerSetup: Record "AJE Table Event Listener Setup";
+        Active: Boolean;
         EventType: Option ,Insert,Modify,Delete,Rename;
 
     /// <summary>
@@ -28,8 +29,14 @@ codeunit 50100 "AJE Table Event Listener"
         TempAJETableEventListenerEntry.DeleteAll();
 
         UnbindSubscription(AJETableEventListener);
+        Active := false;
         if Listen then
-            BindSubscription(AJETableEventListener);
+            Active := BindSubscription(AJETableEventListener);
+    end;
+
+    internal procedure IsActive(): Boolean
+    begin
+        exit(Active);
     end;
 
     local procedure AddEntry(RecRef: RecordRef; EvtType: Option): Text
