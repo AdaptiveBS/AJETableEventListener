@@ -30,7 +30,7 @@ page 50104 "AJE Test Result Pack Card"
                     ToolTip = 'Specifies the version of the product that you are configuring. You can use this field to help differentiate among various versions of a solution.';
                 }
             }
-            part(Control10; "Config. Package Subform")
+            part(Control10; "AJE Test Result Pack Subform")
             {
                 ApplicationArea = All;
                 SubPageLink = "Package Code" = field(Code);
@@ -38,4 +38,10 @@ page 50104 "AJE Test Result Pack Card"
             }
         }
     }
+
+    trigger OnNewRecord(BelowxRec: Boolean)
+    begin
+        Rec."AJE Test Result" := true;
+        Rec."Exclude Config. Tables" := true;
+    end;
 }
