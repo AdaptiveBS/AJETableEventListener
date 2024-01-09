@@ -6,7 +6,7 @@ tableextension 50102 AJETestResultPackCode extends "CAL Test Result"
         {
             Caption = 'Config. Pack Code';
             Editable = false;
-            TableRelation = "Config. Package";// where ();
+            TableRelation = "Config. Package" where("AJE Test Result" = const(true));
         }
     }
 }
