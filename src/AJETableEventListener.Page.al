@@ -5,9 +5,9 @@ page 50100 "AJE Table Event Listener"
 {
     ApplicationArea = All;
     Caption = 'Table Event Listener';
-    DataCaptionExpression = Rec.Name;
+    DataCaptionExpression = Rec."Package Code";
     PageType = List;
-    SourceTable = "AJE Table Event Listener Setup";
+    SourceTable = "Config. Package Table";
     UsageCategory = Administration;
 
     layout
@@ -17,7 +17,7 @@ page 50100 "AJE Table Event Listener"
             group(Setup)
             {
                 Caption = 'Setup';
-                field(Listed; Listen)
+                field(Listen; Listen)
                 {
                     ApplicationArea = All;
                     Caption = 'Listen';
@@ -26,33 +26,69 @@ page 50100 "AJE Table Event Listener"
                         AJETableEventListener.Activate(Listen);
                     end;
                 }
+                field(PackageCode; PackageCode)
+                {
+                    ApplicationArea = All;
+                    Caption = 'Package Code';
+                    ShowMandatory = true;
+
+                    trigger OnLookup(var Text: Text): Boolean
+                    var
+                        ConfigPackage: Record "Config. Package";
+                    begin
+                        if ConfigPackage.Get(PackageCode) then;
+                        if Page.RunModal(Page::"Config. Packages", ConfigPackage) = Action::LookupOK then begin
+                            PackageCode := ConfigPackage.Code;
+                            SetPackageFilter();
+                        end;
+                    end;
+
+                    trigger OnValidate()
+                    var
+                        ConfigPackage: Record "Config. Package";
+                    begin
+                        if PackageCode <> '' then
+                            ConfigPackage.Get(PackageCode);
+                        SetPackageFilter();
+                    end;
+                }
+
             }
             group(Tables)
             {
                 Caption = 'Tables to listen';
+                Visible = PackageCode <> '';
                 repeater(General)
                 {
                     field("Table ID"; Rec."Table ID")
                     {
                         ApplicationArea = All;
                     }
-                    field("Table No."; Rec.Name)
+                    field("Table Name"; Rec."Table Name")
                     {
                         ApplicationArea = All;
                     }
-                    field(Insert; Rec.OnInsert)
+                    field(AvailableFields; Rec."No. of Fields Available")
                     {
                         ApplicationArea = All;
                     }
-                    field(Modify; Rec.OnModify)
+                    field(IncludedFields; Rec."No. of Fields Included")
                     {
                         ApplicationArea = All;
                     }
-                    field(Delete; Rec.OnDelete)
+                    field(Insert; Rec."AJE Insert")
                     {
                         ApplicationArea = All;
                     }
-                    field(Rename; Rec.OnRename)
+                    field(Modify; Rec."AJE Modify")
+                    {
+                        ApplicationArea = All;
+                    }
+                    field(Delete; Rec."AJE Delete")
+                    {
+                        ApplicationArea = All;
+                    }
+                    field(Rename; Rec."AJE Rename")
                     {
                         ApplicationArea = All;
                     }
@@ -92,6 +128,7 @@ page 50100 "AJE Table Event Listener"
         AJETableEventListener: Codeunit "AJE Table Event Listener";
         Listen: Boolean;
         OldChangeLogActive: Boolean;
+        PackageCode: Code[20];
 
     trigger OnOpenPage()
     var
@@ -111,7 +148,7 @@ page 50100 "AJE Table Event Listener"
     begin
         if not OldChangeLogActive then
             if ChangeLogSetup.Get() and ChangeLogSetup."Change Log Activated" then
-                if ConfirmManagement.GetResponseOrDefault('Will you deactivate the chnage log?', false) then
+                if ConfirmManagement.GetResponseOrDefault('Will you deactivate the change log?', false) then
                     PAGE.Run(Page::"Change Log Setup");
     end;
 
@@ -123,5 +160,12 @@ page 50100 "AJE Table Event Listener"
     [InternalEvent(false)]
     local procedure OnListenerSubscribed(var Subscribed: Boolean)
     begin
+    end;
+
+    local procedure SetPackageFilter()
+    begin
+        Rec.FilterGroup(2);
+        Rec.SetRange("Package Code", PackageCode);
+        Rec.FilterGroup(0);
     end;
 }
