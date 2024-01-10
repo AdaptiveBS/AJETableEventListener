@@ -15,7 +15,7 @@ page 50106 "AJE Test Result Pack Subform"
                 field("Table ID"; Rec."Table ID")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the name of the table that is part of the migration process. The name comes from the Name property of the table.';
+                    ToolTip = 'Specifies the number of the table.';
 
                     trigger OnValidate()
                     begin
