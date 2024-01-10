@@ -68,15 +68,16 @@ codeunit 50100 "AJE Table Event Listener"
         CurrentTestRunNo := AJEListenerTestRun."No.";
     end;
 
-    local procedure StopTestRun(var CALTestResult: Record "CAL Test Result")
+    local procedure StopTestRun() TestRunNo: Integer
     var
         AJEListenerTestRun: Record "AJE Listener Test Run";
     begin
         if not AJEListenerTestRun.Get(CurrentTestRunNo) then
-            exit;
-        CALTestResult."AJE Listener Test Run No." := CurrentTestRunNo; // set on before modify
-
+            exit(0);
+        TestRunNo := CurrentTestRunNo; // to set on before modify Test Result       
         CurrentTestRunNo := 0;
+
+        // magic with AJEListenerTestRun
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::GlobalTriggerManagement, OnAfterGetDatabaseTableTriggerSetup, '', false, false)]
@@ -137,7 +138,7 @@ codeunit 50100 "AJE Table Event Listener"
     local procedure OnBeforeModifyCALTestResult(var Rec: Record "CAL Test Result"; var xRec: Record "CAL Test Result"; RunTrigger: Boolean)
     begin
         // Handle CALTestResult.Add() call from UpdateTestFunctionLine() of codeunit 130400 "CAL Test Runner"
-        StopTestRun(Rec);
+        Rec."AJE Listener Test Run No." := StopTestRun();
     end;
 
     [EventSubscriber(ObjectType::Page, Page::"AJE Table Event Listener", OnListenerSubscribed, '', false, false)]
