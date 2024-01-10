@@ -48,19 +48,19 @@ page 50106 "AJE Test Result Pack Subform"
                     ApplicationArea = All;
                     ToolTip = 'Specifies if a delete event will be logged in test results.';
                 }
-                field("No. of Fields Available"; Rec."No. of Fields Available")
-                {
-                    ApplicationArea = All;
-                    DrillDown = true;
-                    DrillDownPageID = "Config. Package Fields";
-                    ToolTip = 'Specifies the count of the number of fields that are available in the migration table.';
-                }
                 field("No. of Fields Included"; Rec."No. of Fields Included")
                 {
                     ApplicationArea = All;
                     DrillDown = true;
                     DrillDownPageID = "Config. Package Fields";
                     ToolTip = 'Specifies the count of the number of fields that are included in the migration table.';
+                }
+                field("No. of Fields Available"; Rec."No. of Fields Available")
+                {
+                    ApplicationArea = All;
+                    DrillDown = true;
+                    DrillDownPageID = "Config. Package Fields";
+                    ToolTip = 'Specifies the count of the number of fields that are available in the migration table.';
                 }
             }
         }
