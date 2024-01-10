@@ -36,4 +36,10 @@ table 50105 "AJE Listener Test Run"
             Clustered = true;
         }
     }
+
+    trigger OnInsert()
+    begin
+        "Created DateTime" := CurrentDateTime();
+        "User ID" := CopyStr(UserId(), 1, MaxStrLen("User ID"));
+    end;
 }

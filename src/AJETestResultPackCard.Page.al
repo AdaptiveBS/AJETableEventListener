@@ -4,6 +4,7 @@ page 50104 "AJE Test Result Pack Card"
     PageType = Document;
     SourceTable = "Config. Package";
     SourceTableView = sorting(Code) where("AJE Test Result" = const(true));
+    UsageCategory = None;
 
     layout
     {

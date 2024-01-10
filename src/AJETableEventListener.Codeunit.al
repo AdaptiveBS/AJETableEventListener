@@ -10,7 +10,8 @@ codeunit 50100 "AJE Table Event Listener"
         TempAJETableEventListenerEntry: Record "AJE Table Event Listener Entry" temporary;
         AJETableEventListenerSetup: Record "AJE Table Event Listener Setup";
         Active: Boolean;
-        EventType: Option ,Insert,Modify,Delete,Rename;
+        CurrentTestRunNo: Integer;
+        EventType: Option Rename,Insert,Modify,Delete;
 
     /// <summary>
     /// GetEntries to show entries in the Listener page.
@@ -52,6 +53,32 @@ codeunit 50100 "AJE Table Event Listener"
         TempAJETableEventListenerEntry.Insert(true);
     end;
 
+    local procedure StartTestRun(var CALTestLine: Record "CAL Test Line")
+    var
+        AJEListenerTestRun: Record "AJE Listener Test Run";
+        TestDescrLbl: Label '%1.%2', Locked = true;
+    begin
+        if CALTestLine."AJE Config. Pack Code" = '' then
+            exit;
+
+        AJEListenerTestRun.Init();
+        AJEListenerTestRun.Validate("Config. Package Code", CALTestLine."AJE Config. Pack Code");
+        AJEListenerTestRun.Description := StrSubstNo(TestDescrLbl, CALTestLine."Test Codeunit", CALTestLine.Function);
+        AJEListenerTestRun.Insert(true); // autoincremented "No."
+        CurrentTestRunNo := AJEListenerTestRun."No.";
+    end;
+
+    local procedure StopTestRun(var CALTestResult: Record "CAL Test Result")
+    var
+        AJEListenerTestRun: Record "AJE Listener Test Run";
+    begin
+        if not AJEListenerTestRun.Get(CurrentTestRunNo) then
+            exit;
+        CALTestResult."AJE Listener Test Run No." := CurrentTestRunNo; // set on before modify
+
+        CurrentTestRunNo := 0;
+    end;
+
     [EventSubscriber(ObjectType::Codeunit, Codeunit::GlobalTriggerManagement, OnAfterGetDatabaseTableTriggerSetup, '', false, false)]
     local procedure OnAfterGetDatabaseTableTriggerSetup(TableId: Integer; var OnDatabaseInsert: Boolean; var OnDatabaseModify: Boolean; var OnDatabaseDelete: Boolean; var OnDatabaseRename: Boolean);
     begin
@@ -61,6 +88,17 @@ codeunit 50100 "AJE Table Event Listener"
             OnDatabaseDelete := OnDatabaseDelete or AJETableEventListenerSetup.OnDelete;
             OnDatabaseRename := OnDatabaseRename or AJETableEventListenerSetup.OnRename;
         end;
+    end;
+
+    [EventSubscriber(ObjectType::Table, Database::"CAL Test Line", OnAfterModifyEvent, '', false, false)]
+    local procedure OnAfterModifyCALTestLine(var Rec: Record "CAL Test Line"; var xRec: Record "CAL Test Line"; RunTrigger: Boolean)
+    begin
+        // Handle modification done in InitTestFunctionLine() of codeunit 130400 "CAL Test Runner" 
+        if Rec."Line Type" <> Rec."Line Type"::"Function" then
+            exit;
+
+        if (Rec.Result = Rec.Result::Skipped) and (Rec."Finish Time" = Rec."Start Time") then
+            StartTestRun(Rec);
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::GlobalTriggerManagement, OnAfterOnDatabaseDelete, '', false, false)]
@@ -93,6 +131,13 @@ codeunit 50100 "AJE Table Event Listener"
         if AJETableEventListenerSetup.Get(RecRef.Number) then
             if AJETableEventListenerSetup.OnRename then
                 AddEntry(RecRef, EventType::Rename);
+    end;
+
+    [EventSubscriber(ObjectType::Table, Database::"CAL Test Result", OnBeforeModifyEvent, '', false, false)]
+    local procedure OnBeforeModifyCALTestResult(var Rec: Record "CAL Test Result"; var xRec: Record "CAL Test Result"; RunTrigger: Boolean)
+    begin
+        // Handle CALTestResult.Add() call from UpdateTestFunctionLine() of codeunit 130400 "CAL Test Runner"
+        StopTestRun(Rec);
     end;
 
     [EventSubscriber(ObjectType::Page, Page::"AJE Table Event Listener", OnListenerSubscribed, '', false, false)]
