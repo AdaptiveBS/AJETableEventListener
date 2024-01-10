@@ -19,4 +19,19 @@ tableextension 50100 AJEConfigPackTableRIMD extends "Config. Package Table"
             Caption = 'Delete';
         }
     }
+
+    procedure AJEGetTriggerSetup() TriggerSetup: List of [Boolean]
+    begin
+        TriggerSetup.Add("AJE Insert");
+        TriggerSetup.Add("AJE Modify");
+        TriggerSetup.Add("AJE Delete");
+        TriggerSetup.Add("AJE Rename");
+    end;
+
+    procedure AJEIsAnyTriggerSet(): Boolean
+    begin
+        exit("AJE Insert" or "AJE Modify" or "AJE Delete" or "AJE Rename");
+    end;
+
+
 }
