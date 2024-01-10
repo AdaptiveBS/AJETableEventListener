@@ -1,4 +1,4 @@
-tableextension 50101 AJETestLinePackCode extends "CAL Test Line"
+tableextension 50101 AJETestLinePackCode extends "Test Method Line"
 {
     fields
     {
@@ -13,17 +13,34 @@ tableextension 50101 AJETestLinePackCode extends "CAL Test Line"
                     UpdateChildrenPackCode(Rec);
             end;
         }
+        field(50101; "AJE Test Run No."; Integer)
+        {
+            Caption = 'Latest Test Run No.';
+            TableRelation = "AJE Listener Test Run";
+        }
     }
 
-    local procedure UpdateChildrenPackCode(CodCALTestLine: Record "CAL Test Line")
+    procedure AJEShowTestResults()
     var
-        CALTestLine: Record "CAL Test Line";
+        AJEListenerTestRun: Record "AJE Listener Test Run";
     begin
-        CALTestLine.Copy(CodCALTestLine);
-        CALTestLine.SetRange("Test Suite", CodCALTestLine."Test Suite");
-        while (CALTestLine.Next() <> 0) and (CALTestLine."Line Type" = CALTestLine."Line Type"::Function) do begin
-            CALTestLine."AJE Config. Pack Code" := CodCALTestLine."AJE Config. Pack Code";
-            CALTestLine.Modify();
+        AJEListenerTestRun.SetRange("Codeunit ID", "Test Codeunit");
+        if "Function" <> '' then
+            AJEListenerTestRun.SetRange("Function Name", "Function");
+        if AJEListenerTestRun.FindLast() then;
+        PAGE.Run(PAGE::"AJE Listener Test Runs", AJEListenerTestRun);
+    end;
+
+    local procedure UpdateChildrenPackCode(CodTestMethodLine: Record "Test Method Line")
+    var
+        TestMethodLine: Record "Test Method Line";
+    begin
+        TestMethodLine.Copy(CodTestMethodLine);
+        TestMethodLine.SetRange("Test Suite", CodTestMethodLine."Test Suite");
+        while (TestMethodLine.Next() <> 0) and (TestMethodLine."Line Type" = TestMethodLine."Line Type"::Function) do begin
+            TestMethodLine."AJE Config. Pack Code" := CodTestMethodLine."AJE Config. Pack Code";
+            TestMethodLine.Modify();
         end;
     end;
+
 }

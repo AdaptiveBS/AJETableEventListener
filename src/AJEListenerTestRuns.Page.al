@@ -31,10 +31,15 @@ page 50107 "AJE Listener Test Runs"
                     ApplicationArea = All;
                     ToolTip = 'Specifies the confiuration package code that defines tables and fields to be stored.';
                 }
-                field("Created DateTime"; Rec."Created DateTime")
+                field("Start Time"; Rec."Start Time")
                 {
                     ApplicationArea = All;
                     ToolTip = 'Specifies the time when the run was started.';
+                }
+                field("Finish Time"; Rec."Finish Time")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the time when the run was finished.';
                 }
                 field("User ID"; Rec."User ID")
                 {

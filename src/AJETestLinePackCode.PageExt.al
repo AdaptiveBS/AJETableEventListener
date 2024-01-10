@@ -1,8 +1,8 @@
-pageextension 50101 AJETestLinePackCode extends "CAL Test Tool"
+pageextension 50101 AJETestLinePackCode extends "AL Test Tool"
 {
     layout
     {
-        addafter(CurrentSuiteName)
+        addafter(CodeCoverageTrackAllSesssions)
         {
             field(AJECollectResult; CollectResult)
             {
@@ -17,18 +17,34 @@ pageextension 50101 AJETestLinePackCode extends "CAL Test Tool"
                 end;
             }
         }
-        addafter(RunColumn)
+        addafter(Run)
         {
-            field(AJEConfigPackCode; Rec."AJE Config. Pack Code")
+            field("AJE Config. Pack Code"; Rec."AJE Config. Pack Code")
             {
                 ApplicationArea = All;
-                LookupPageId = 50105;
+                LookupPageId = "AJE Test Result Packages";
                 ToolTip = 'Specifies the configuration package that defines tables and fields which data will be stored as test run results.';
                 Visible = CollectResult;
 
                 trigger OnValidate()
                 begin
                     CurrPage.Update(true);
+                end;
+            }
+        }
+        addafter(Result)
+        {
+            field("AJE Test Run No."; Rec."AJE Test Run No.")
+            {
+                ApplicationArea = All;
+                DrillDown = true;
+                Editable = false;
+                ToolTip = 'Specifies the number of the latest test run.';
+                Visible = CollectResult;
+
+                trigger OnDrillDown()
+                begin
+                    Rec.AJEShowTestResults();
                 end;
             }
         }

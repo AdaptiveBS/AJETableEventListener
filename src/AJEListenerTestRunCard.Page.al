@@ -30,7 +30,7 @@ page 50108 "AJE Listener Test Run Card"
                     ApplicationArea = All;
                     ToolTip = 'Specifies the confiuration package code that defines tables and fields to be stored.';
                 }
-                field("Created DateTime"; Rec."Created DateTime")
+                field("Start Time"; Rec."Start Time")
                 {
                     ApplicationArea = All;
                     ToolTip = 'Specifies the time when the run was started.';
