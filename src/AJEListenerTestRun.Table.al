@@ -148,6 +148,15 @@ table 50105 "AJE Listener Test Run"
         Modify(true);
     end;
 
+    internal procedure ShowConfigPackage()
+    var
+        ConfigPackage: Record "Config. Package";
+    begin
+        ConfigPackage.Get("Config. Package Code");
+        ConfigPackage.SetRecFilter();
+        Page.Run(Page::"AJE Test Result Pack Card", ConfigPackage);
+    end;
+
     local procedure GetCodeunitName(ID: Integer): Text[30]
     var
         AllObjWithCaption: Record AllObjWithCaption;

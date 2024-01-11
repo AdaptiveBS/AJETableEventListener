@@ -5,6 +5,7 @@ page 50109 "AJE Config. Pack Rec. Subform"
     Editable = false;
     PageType = ListPart;
     SourceTable = "Config. Package Record";
+    SourceTableView = sorting("No.");
 
     layout
     {
@@ -17,12 +18,6 @@ page 50109 "AJE Config. Pack Rec. Subform"
                 {
                     ApplicationArea = All;
                     ToolTip = 'Specifies the number of the table.';
-                }
-                field("Rec No."; Rec."No.")
-                {
-                    ApplicationArea = All;
-                    DrillDown = false;
-                    ToolTip = 'Specifies the name of the configuration table. After you select a table ID from the list of tables, the table name is automatically filled in.';
                 }
                 field("AJE Record ID"; RecordIDText)
                 {
@@ -48,9 +43,35 @@ page 50109 "AJE Config. Pack Rec. Subform"
                         Rec.AJEShowCallStack();
                     end;
                 }
+                field("Rec No."; Rec."No.")
+                {
+                    ApplicationArea = All;
+                    DrillDown = false;
+                    ToolTip = 'Specifies the name of the configuration table. After you select a table ID from the list of tables, the table name is automatically filled in.';
+                }
             }
         }
     }
+
+    actions
+    {
+        area(Processing)
+        {
+            action(ShowData)
+            {
+                ApplicationArea = All;
+                Caption = 'Show Data';
+                Image = Grid;
+                ToolTip = 'View all stored records of the current table.';
+
+                trigger OnAction()
+                begin
+                    Rec.ShowRecords();
+                end;
+            }
+        }
+    }
+
 
     trigger OnAfterGetRecord()
     begin
