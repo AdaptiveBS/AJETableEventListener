@@ -12,10 +12,9 @@ table 50101 "AJE Table Event Listener Entry"
         {
             Caption = 'Table ID';
         }
-        field(2; Type; Option)
+        field(2; Type; Enum "AJE Listener Event Type")
         {
             Caption = 'Type';
-            OptionMembers = ,Insert,Modify,Delete,Rename;
         }
         field(3; "Created DateTime"; DateTime)
         {

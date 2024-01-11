@@ -24,7 +24,7 @@ page 50109 "AJE Config. Pack Rec. Subform"
                     ApplicationArea = All;
                     Caption = 'Record ID';
                 }
-                field("AJE RIMD"; Rec."AJE RIMD")
+                field("AJE Event Type"; Rec."AJE Event Type")
                 {
                     ApplicationArea = All;
                     ToolTip = 'Specifies the type of the change - rename, insert, modify, or delete.';

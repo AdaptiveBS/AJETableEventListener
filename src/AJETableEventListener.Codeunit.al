@@ -15,7 +15,6 @@ codeunit 50100 "AJE Table Event Listener"
         TableFieldsSetup: Dictionary of [Integer, List of [Integer]];
         CurrentTestRunNo: Integer;
         RecordNo: Integer;
-        EventType: Option ,Insert,Modify,Delete,Rename;
 
     /// <summary>
     /// GetEntries to show entries in the Listener page.
@@ -60,15 +59,20 @@ codeunit 50100 "AJE Table Event Listener"
         RecordNo += 1;
     end;
 
-    local procedure AddEntry(RecRef: RecordRef; EvtType: Option)
+    local procedure AddEntry(RecRef: RecordRef; EvtType: Enum "AJE Listener Event Type")
     var
         Triggers: List of [Boolean];
         Fields: List of [Integer];
     begin
         if TableTriggerSetup.Get(RecRef.Number, Triggers) then
-            if Triggers.Get(EvtType) then
+            if Triggers.Get(EvtType.AsInteger()) then
                 if TableFieldsSetup.Get(RecRef.Number, Fields) then
-                    AddEntry(RecRef, Fields, EvtType);
+                    AddEntry(RecRef, Fields, EvtType.AsInteger());
+    end;
+
+    local procedure EventTypeAsInt(Type: Enum "AJE Listener Event Type"): Integer
+    begin
+        exit(Type.AsInteger());
     end;
 
     local procedure GetFieldValueAsText(RecRef: RecordRef; FieldId: Integer) Value: Text
@@ -141,7 +145,7 @@ codeunit 50100 "AJE Table Event Listener"
         ConfigPackageData.Insert(true);
     end;
 
-    local procedure SaveRecordDataEntry(TableId: Integer; RecNo: Integer; RIMD: Text)
+    local procedure SaveRecordDataEntry(TableId: Integer; RecNo: Integer; EvtType: Text)
     var
         ConfigPackageRecord: Record "Config. Package Record";
         RecID: RecordId;
@@ -150,7 +154,7 @@ codeunit 50100 "AJE Table Event Listener"
         ConfigPackageRecord."Table ID" := TableId;
         ConfigPackageRecord."No." := RecNo;
         ConfigPackageRecord."AJE Listener Test Run No." := CurrentTestRunNo;
-        Evaluate(ConfigPackageRecord."AJE RIMD", RIMD);
+        Evaluate(ConfigPackageRecord."AJE Event Type", EvtType);
 
         ConfigPackageRecord.AJESetCallStack('');
         ConfigPackageRecord."AJE Record ID" := RecID;
@@ -232,35 +236,35 @@ codeunit 50100 "AJE Table Event Listener"
             exit;
 
         if TableTriggerSetup.Get(TableId, TriggerSetup) then begin
-            OnDatabaseInsert := OnDatabaseInsert or TriggerSetup.Get(EventType::Insert);
-            OnDatabaseModify := OnDatabaseModify or TriggerSetup.Get(EventType::Modify);
-            OnDatabaseDelete := OnDatabaseDelete or TriggerSetup.Get(EventType::Delete);
-            OnDatabaseRename := OnDatabaseRename or TriggerSetup.Get(EventType::Rename);
+            OnDatabaseInsert := OnDatabaseInsert or TriggerSetup.Get(EventTypeAsInt("AJE Listener Event Type"::Insert));
+            OnDatabaseModify := OnDatabaseModify or TriggerSetup.Get(EventTypeAsInt("AJE Listener Event Type"::"Modify"));
+            OnDatabaseDelete := OnDatabaseDelete or TriggerSetup.Get(EventTypeAsInt("AJE Listener Event Type"::Delete));
+            OnDatabaseRename := OnDatabaseRename or TriggerSetup.Get(EventTypeAsInt("AJE Listener Event Type"::Rename));
         end;
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::GlobalTriggerManagement, OnAfterOnDatabaseDelete, '', false, false)]
     local procedure OnAfterOnDatabaseDelete(RecRef: RecordRef);
     begin
-        AddEntry(RecRef, EventType::Delete);
+        AddEntry(RecRef, "AJE Listener Event Type"::Delete);
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::GlobalTriggerManagement, OnAfterOnDatabaseInsert, '', false, false)]
     local procedure OnAfterOnDatabaseInsert(RecRef: RecordRef);
     begin
-        AddEntry(RecRef, EventType::Insert);
+        AddEntry(RecRef, "AJE Listener Event Type"::Insert);
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::GlobalTriggerManagement, OnAfterOnDatabaseModify, '', false, false)]
     local procedure OnAfterOnDatabaseModify(RecRef: RecordRef);
     begin
-        AddEntry(RecRef, EventType::Modify);
+        AddEntry(RecRef, "AJE Listener Event Type"::Modify);
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::GlobalTriggerManagement, OnAfterOnDatabaseRename, '', false, false)]
     local procedure OnAfterOnDatabaseRename(RecRef: RecordRef; xRecRef: RecordRef);
     begin
-        AddEntry(RecRef, EventType::Rename);
+        AddEntry(RecRef, "AJE Listener Event Type"::Rename);
     end;
 
     [EventSubscriber(ObjectType::Table, Database::"Test Method Line", OnBeforeModifyEvent, '', false, false)]

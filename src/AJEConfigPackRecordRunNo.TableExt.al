@@ -8,12 +8,10 @@ tableextension 50104 AJEConfigPackRecordRunNo extends "Config. Package Record"
             Editable = false;
             TableRelation = "AJE Listener Test Run"."No.";
         }
-        field(50101; "AJE RIMD"; Option)
+        field(50101; "AJE Event Type"; Enum "AJE Listener Event Type")
         {
-            Caption = 'RIMD';
+            Caption = 'Event Type';
             Editable = false;
-            OptionCaption = ',Insert,Modify,Delete,Rename';
-            OptionMembers = ,Insert,Modify,Delete,Rename;
         }
         field(50102; "AJE Record ID"; RecordId)
         {
