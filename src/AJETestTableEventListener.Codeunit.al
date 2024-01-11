@@ -1,9 +1,13 @@
 codeunit 50101 "AJE Test Table Event Listener"
 {
-    Permissions = TableData "Cust. Ledger Entry" = RIMD,
-                TableData "Detailed Cust. Ledg. Entry" = RIMD,
-                TableData "G/L Entry" = RIMD;
     Subtype = Test;
+    TestPermissions = Disabled;
+
+    [Test]
+    procedure TestFailure()
+    begin
+        Error('this is a strange error');
+    end;
 
     [Test]
     procedure TestRIMD()
@@ -38,4 +42,5 @@ codeunit 50101 "AJE Test Table Event Listener"
 
         DetailedCustLedgEntry.Delete();
     end;
+
 }
