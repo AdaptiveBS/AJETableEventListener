@@ -83,40 +83,22 @@ tableextension 50104 AJEConfigPackRecordRunNo extends "Config. Package Record"
 
     internal procedure ShowRecords()
     var
-        ConfigPackageField: Record "Config. Package Field";
         ConfigPackageRecord: Record "Config. Package Record";
-        ConfigPackageRecords: Page "Config. Package Records";
-        MatrixColumnCaptions: array[1000] of Text[100];
+        ConfigPackageRecords: Page "AJE Config. Package Records";
+        Fields: List of [Integer];
+        FieldCaptions: List of [Text];
     begin
-        ConfigPackageField.SetRange("Package Code", "Package Code");
-        ConfigPackageField.SetRange("Table ID", "Table ID");
-        ConfigPackageField.SetRange("Include Field", true);
-
-        FillMatrixColumnCaptions(MatrixColumnCaptions, GetFieldCaptions());
+        GetFieldsCaptions(Fields, FieldCaptions);
 
         Clear(ConfigPackageRecords);
+        ConfigPackageRecord.SetRange("AJE Listener Test Run No.", "AJE Listener Test Run No.");
         ConfigPackageRecord.SetRange("Package Code", "Package Code");
         ConfigPackageRecord.SetRange("Table ID", "Table ID");
         ConfigPackageRecords.SetTableView(ConfigPackageRecord);
         ConfigPackageRecords.LookupMode(true);
-        ConfigPackageRecords.Load(MatrixColumnCaptions, GetTableCaption(), "Package Code", "Table ID", false);
-
+        ConfigPackageRecords.Load(Fields, FieldCaptions, GetTableCaption());
         ConfigPackageRecords.RunModal();
     end;
-
-    local procedure FillMatrixColumnCaptions(var MatrixColumnCaptions: array[1000] of Text[100]; FieldCaptions: List of [Text[80]])
-    var
-        i: Integer;
-        Caption: Text[80];
-    begin
-        i := 1;
-        Clear(MatrixColumnCaptions);
-        foreach Caption in FieldCaptions do begin
-            MatrixColumnCaptions[i] := Caption;
-            i += 1;
-        end;
-    end;
-
 
     local procedure GetCurrCallStack() CallStack: Text;
     var
@@ -129,7 +111,7 @@ tableextension 50104 AJEConfigPackRecordRunNo extends "Config. Package Record"
         CallStack := CopyStr(CallStack, StrPos(CallStack, '\') + 1);
     end;
 
-    local procedure GetFieldCaptions() FieldCaptions: List of [Text[80]]
+    local procedure GetFieldsCaptions(var Fields: List of [Integer]; var FieldCaptions: List of [Text])
     var
         ConfigPackageData: Record "Config. Package Data";
         Field: Record Field;
@@ -145,6 +127,7 @@ tableextension 50104 AJEConfigPackRecordRunNo extends "Config. Package Record"
                     else
                         Field.Get(ConfigPackageData."Table ID", ConfigPackageData."Field ID");
                 end;
+                Fields.Add(ConfigPackageData."Field ID");
                 FieldCaptions.Add(Field."Field Caption");
             until ConfigPackageData.Next() = 0;
     end;

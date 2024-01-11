@@ -62,13 +62,4 @@ page 50108 "AJE Listener Test Run Card"
             }
         }
     }
-
-    var
-        ConfigPackageRecord: Record "Config. Package Record";
-
-    trigger OnAfterGetCurrRecord()
-    begin
-        //ConfigPackageRecord.SetRange("AJE Listener Test Run No.", Rec."No.");
-        //CurrPage.Records.Page.SetTableView(ConfigPackageRecord);
-    end;
 }
