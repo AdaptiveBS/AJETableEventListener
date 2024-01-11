@@ -58,14 +58,12 @@ codeunit 50100 "AJE Table Event Listener"
 
         RecordNo += 1;
         if TestRunData.Get(CurrentTestRunNo, TableData) then begin
-            if TableData.Get(RecRef.Number, RecordData) then begin
-                RecordData.Add(RecordNo, FieldData);
-                TableData.Set(RecRef.Number, RecordData);
-            end else begin
+            if TableData.Get(RecRef.Number, RecordData) then
+                RecordData.Add(RecordNo, FieldData)
+            else begin
                 RecordData.Add(RecordNo, FieldData);
                 TableData.Add(RecRef.Number, RecordData);
             end;
-            TestRunData.Set(CurrentTestRunNo, TableData);
         end else begin
             RecordData.Add(RecordNo, FieldData);
             TableData.Add(RecRef.Number, RecordData);
@@ -83,17 +81,6 @@ codeunit 50100 "AJE Table Event Listener"
         TempAJETableEventListenerEntry.SetCallStack();
         TempAJETableEventListenerEntry.Insert(true);
         */
-    end;
-
-    local procedure CreateTestRun(var TestMethodLine: Record "Test Method Line"): Integer
-    var
-        TestDescrLbl: Label '%1.%2', Locked = true;
-    begin
-        AJEListenerTestRun.Init();
-        AJEListenerTestRun.Validate("Config. Package Code", TestMethodLine."AJE Config. Pack Code");
-        AJEListenerTestRun.Description := StrSubstNo(TestDescrLbl, TestMethodLine."Test Codeunit", TestMethodLine.Function);
-        AJEListenerTestRun.Insert(true); // autoincremented "No."
-        exit(AJEListenerTestRun."No.");
     end;
 
     local procedure GetFieldValueAsText(RecRef: RecordRef; FieldId: Integer) Value: Text
@@ -143,6 +130,7 @@ codeunit 50100 "AJE Table Event Listener"
             exit(false);
 
         TableFieldsSetup.Add(ConfigPackageTable."Table ID", Fields);
+        exit(true);
     end;
 
     local procedure SetTableSetup()
@@ -158,24 +146,33 @@ codeunit 50100 "AJE Table Event Listener"
             until ConfigPackageTable.Next() = 0;
     end;
 
-    local procedure StartTestRun(var TestMethodLine: Record "Test Method Line")
+    local procedure StartTestRun(var TestMethodLine: Record "Test Method Line"): Integer
     begin
         if TestMethodLine."AJE Config. Pack Code" = '' then
             exit;
 
-        CurrentTestRunNo := CreateTestRun(TestMethodLine);
+        CurrentTestRunNo := AJEListenerTestRun.Initialize(TestMethodLine);
+        ConfigPackage.Get(AJEListenerTestRun."Config. Package Code");
+        SetTableSetup();
+
+        exit(CurrentTestRunNo);
     end;
 
-    local procedure StopTestRun() TestRunNo: Integer
+    local procedure StopTestRun(var CurrentTestMethodLine: Record "Test Method Line")
     begin
         if not GetListenerTestRun() then
-            exit(0);
-        TestRunNo := CurrentTestRunNo; // to set on before modify Test Result       
+            exit;
+
+        AJEListenerTestRun.Update(CurrentTestMethodLine);
 
         MoveDataToConfigPackageData();
 
         CurrentTestRunNo := 0;
         Clear(AJEListenerTestRun);
+        Clear(ConfigPackage);
+        Clear(TableTriggerSetup);
+        Clear(TableFieldsSetup);
+        Clear(TestRunData);
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::GlobalTriggerManagement, OnAfterGetDatabaseTableTriggerSetup, '', false, false)]
@@ -202,17 +199,6 @@ codeunit 50100 "AJE Table Event Listener"
                     OnDatabaseRename := OnDatabaseRename or AJETableEventListenerSetup.OnRename;
                 end;
         */
-    end;
-
-    [EventSubscriber(ObjectType::Table, Database::"Test Method Line", OnAfterModifyEvent, '', false, false)]
-    local procedure OnAfterModifyTestMethodLine(var Rec: Record "Test Method Line"; var xRec: Record "Test Method Line"; RunTrigger: Boolean)
-    begin
-        // Handle modification done in InitTestFunctionLine() of codeunit 130400 "CAL Test Runner" 
-        if Rec."Line Type" <> Rec."Line Type"::"Function" then
-            exit;
-
-        if (Rec.Result = Rec.Result::Skipped) and (Rec."Finish Time" = Rec."Start Time") then
-            StartTestRun(Rec);
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::GlobalTriggerManagement, OnAfterOnDatabaseDelete, '', false, false)]
@@ -282,6 +268,18 @@ codeunit 50100 "AJE Table Event Listener"
                 AddEntry(RecRef, EventType::Rename);*/
     end;
 
+    [EventSubscriber(ObjectType::Table, Database::"Test Method Line", OnBeforeModifyEvent, '', false, false)]
+    local procedure OnBeforeModifyTestMethodLine(var Rec: Record "Test Method Line"; var xRec: Record "Test Method Line"; RunTrigger: Boolean)
+    begin
+        if (Rec.Function = '') or (Rec.Function = 'OnRun') or (Rec.Result = Rec.Result::" ") then
+            exit;
+
+        if Rec.Result = Rec.Result::Skipped then // SetStartTimeOnTestLine of 130454 "Test Runner - Mgt"
+            Rec."AJE Test Run No." := StartTestRun(Rec)
+        else // UpdateTestFunctionLine() of 130454 "Test Runner - Mgt"
+            StopTestRun(Rec);
+    end;
+
     [EventSubscriber(ObjectType::Page, Page::"AJE Table Event Listener", OnListenerSubscribed, '', false, false)]
     local procedure OnListenerSubscribed(var Subscribed: Boolean);
     begin
@@ -291,7 +289,11 @@ codeunit 50100 "AJE Table Event Listener"
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Test Runner - Mgt", OnAfterTestMethodRun, '', false, false)]
     local procedure TestRunnerMgt_OnAfterTestMethodRun(var CurrentTestMethodLine: Record "Test Method Line"; CodeunitID: Integer; CodeunitName: Text[30]; FunctionName: Text[128]; FunctionTestPermissions: TestPermissions; IsSuccess: Boolean)
     begin
-        StopTestRun()
+    end;
+
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Test Runner - Mgt", OnBeforeTestMethodRun, '', false, false)]
+    local procedure TestRunnerMgtOnBeforeTestMethodRun(var CurrentTestMethodLine: Record "Test Method Line"; CodeunitID: Integer; CodeunitName: Text[30]; FunctionName: Text[128]; FunctionTestPermissions: TestPermissions)
+    begin
     end;
 
 

@@ -20,6 +20,14 @@ tableextension 50100 AJEConfigPackTableRIMD extends "Config. Package Table"
         }
     }
 
+    trigger OnInsert()
+    begin
+        "AJE Insert" := true;
+        "AJE Modify" := true;
+        "AJE Delete" := true;
+        "AJE Rename" := true;
+    end;
+
     procedure AJEGetTriggerSetup() TriggerSetup: List of [Boolean]
     begin
         TriggerSetup.Add("AJE Insert");

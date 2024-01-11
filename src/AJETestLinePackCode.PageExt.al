@@ -13,7 +13,7 @@ pageextension 50101 AJETestLinePackCode extends "AL Test Tool"
                 trigger OnValidate()
                 begin
                     AJETableEventListener.Activate(CollectResult);
-                    CurrPage.Update();
+                    CurrPage.Update(false);
                 end;
             }
         }

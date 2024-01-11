@@ -46,13 +46,13 @@ table 50105 "AJE Listener Test Run"
         {
             Caption = 'Function Name';
         }
-        field(9; "Error Message"; Text[250])
+        field(9; "Error Message"; Blob)
         {
             Caption = 'Error Message';
         }
-        field(10; "Call Stack"; BLOB)
+        field(10; "Error Call Stack"; Blob)
         {
-            Caption = 'Call Stack';
+            Caption = 'Error Call Stack';
             Compressed = false;
         }
         field(11; "Execution Time"; Duration)
@@ -87,35 +87,65 @@ table 50105 "AJE Listener Test Run"
         "User ID" := CopyStr(UserId(), 1, MaxStrLen("User ID"));
     end;
 
-    procedure Initialize(CodeunitId: Integer; FunctionName: Text[128]): Boolean
+    trigger OnModify()
+    begin
+        "Finish Time" := CurrentDateTime();
+        "Execution Time" := "Finish Time" - "Start Time";
+    end;
+
+    procedure GetErrorCallStack(): Text
+    var
+        ErrorCallStackInStream: InStream;
+        ErrorCallStack: Text;
+    begin
+        CalcFields("Error Call Stack");
+        if not "Error Call Stack".HasValue() then
+            exit('');
+
+        "Error Call Stack".CreateInStream(ErrorCallStackInStream, TEXTENCODING::UTF16);
+        ErrorCallStackInStream.ReadText(ErrorCallStack);
+        exit(ErrorCallStack);
+    end;
+
+    procedure GetFullErrorMessage(): Text
+    var
+        ErrorMessageInStream: InStream;
+        ErrorMessage: Text;
+    begin
+        CalcFields("Error Message");
+        if not "Error Message".HasValue() then
+            exit('');
+
+        "Error Message".CreateInStream(ErrorMessageInStream, TextEncoding::UTF16);
+        ErrorMessageInStream.ReadText(ErrorMessage);
+        exit(ErrorMessage);
+    end;
+
+    procedure Initialize(var TestMethodLine: Record "Test Method Line"): Integer
+    var
+        TestDescrLbl: Label '%1.%2', Locked = true;
     begin
         Init();
         "No." := 0; // autoincrement
-        Validate("Codeunit ID", CodeunitId);
-        "Function Name" := FunctionName;
+        Validate("Config. Package Code", TestMethodLine."AJE Config. Pack Code");
+        Validate("Codeunit ID", TestMethodLine."Test Codeunit");
+        "Function Name" := TestMethodLine.Function;
+        Description := StrSubstNo(TestDescrLbl, "Codeunit ID", "Function Name");
         Insert(true);
+
+        exit("No.");
     end;
 
-    procedure Update(Success: Boolean; FinishTime: DateTime)
+    procedure Update(var CurrentTestMethodLine: Record "Test Method Line")
     var
-        Out: OutStream;
+        TestSuiteMgt: Codeunit "Test Suite Mgt.";
     begin
-        if Success then begin
-            Result := Result::Passed;
-            ClearLastError();
-        end else begin
-            "Error Message" := CopyStr(GetLastErrorText(), 1, 250);
-            "Call Stack".CreateOutStream(Out);
-            Out.WriteText(GetLastErrorCallstack);
-            if StrPos("Error Message", 'Known failure:') = 1 then
-                Result := Result::Inconclusive
-            else
-                Result := Result::Failed;
+        Result := CurrentTestMethodLine.Result;
+        if CurrentTestMethodLine.Result = CurrentTestMethodLine.Result::Failure then begin
+            SetErrorCallStack(TestSuiteMgt.GetErrorCallStack(CurrentTestMethodLine));
+            SetFullErrorMessage(TestSuiteMgt.GetFullErrorMessage(CurrentTestMethodLine));
         end;
-
-        "Finish Time" := FinishTime;
-        "Execution Time" := "Finish Time" - "Start Time";
-        Modify();
+        Modify(true);
     end;
 
     local procedure GetCodeunitName(ID: Integer): Text[30]
@@ -126,6 +156,23 @@ table 50105 "AJE Listener Test Run"
         AllObjWithCaption.SetRange("Object ID", ID);
         if AllObjWithCaption.FindFirst() then
             exit(AllObjWithCaption."Object Name");
+    end;
+
+    local procedure SetErrorCallStack(ErrorCallStack: Text)
+    var
+        ErrorCallStackOutStream: OutStream;
+    begin
+        "Error Call Stack".CreateOutStream(ErrorCallStackOutStream, TEXTENCODING::UTF16);
+        ErrorCallStackOutStream.WriteText(ErrorCallStack);
+    end;
+
+    local procedure SetFullErrorMessage(ErrorMessage: Text)
+    var
+        ErrorMessageOutStream: OutStream;
+    begin
+        "Error Message".CreateOutStream(ErrorMessageOutStream, TextEncoding::UTF16);
+        ErrorMessageOutStream.WriteText(ErrorMessage);
+        Modify(true);
     end;
 
 }

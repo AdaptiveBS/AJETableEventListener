@@ -54,7 +54,7 @@ tableextension 50104 AJEConfigPackRecordRunNo extends "Config. Package Record"
         if not "AJE Call Stack".HasValue() then
             exit('');
         CalcFields("AJE Call Stack");
-        "AJE Call Stack".CreateInStream(InStream, TEXTENCODING::Windows);
+        "AJE Call Stack".CreateInStream(InStream, TEXTENCODING::UTF16);
         exit(TypeHelper.ReadAsTextWithSeparator(InStream, TypeHelper.LFSeparator()));
     end;
 
@@ -65,7 +65,7 @@ tableextension 50104 AJEConfigPackRecordRunNo extends "Config. Package Record"
     var
         OutStream: OutStream;
     begin
-        "AJE Call Stack".CreateOutStream(OutStream, TEXTENCODING::Windows);
+        "AJE Call Stack".CreateOutStream(OutStream, TEXTENCODING::UTF16);
         OutStream.Write(GetCurrCallStack());
     end;
 
