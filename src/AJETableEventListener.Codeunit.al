@@ -9,7 +9,6 @@ codeunit 50100 "AJE Table Event Listener"
     var
         AJEListenerTestRun: Record "AJE Listener Test Run";
         ConfigPackage: Record "Config. Package";
-        TestRunnerMgt: Codeunit "Test Runner - Mgt";
         Active: Boolean;
         TestRunData: Dictionary of [Integer, Dictionary of [Integer, Dictionary of [Integer, Dictionary of [Integer, Text]]]]; // [TestRunNo, [TableID, [RecNo, [FieldID, Text]]]]
         TableTriggerSetup: Dictionary of [Integer, List of [Boolean]];
@@ -69,18 +68,17 @@ codeunit 50100 "AJE Table Event Listener"
             TableData.Add(RecRef.Number, RecordData);
             TestRunData.Add(CurrentTestRunNo, TableData);
         end;
+    end;
 
-        /*
-        if TempAJETableEventListenerEntry.FindLast() then
-            TempAJETableEventListenerEntry.Id += 1;
-
-        TempAJETableEventListenerEntry.Init();
-        TempAJETableEventListenerEntry.Type := EvtType;
-        TempAJETableEventListenerEntry."Table ID" := RecRef.Number;
-        TempAJETableEventListenerEntry."Record ID" := RecRef.RecordId;
-        TempAJETableEventListenerEntry.SetCallStack();
-        TempAJETableEventListenerEntry.Insert(true);
-        */
+    local procedure AddEntry(RecRef: RecordRef; EvtType: Option)
+    var
+        Triggers: List of [Boolean];
+        Fields: List of [Integer];
+    begin
+        if TableTriggerSetup.Get(RecRef.Number, Triggers) then
+            if Triggers.Get(EvtType) then
+                if TableFieldsSetup.Get(RecRef.Number, Fields) then
+                    AddEntry(RecRef, Fields, EvtType);
     end;
 
     local procedure GetFieldValueAsText(RecRef: RecordRef; FieldId: Integer) Value: Text
@@ -191,81 +189,30 @@ codeunit 50100 "AJE Table Event Listener"
             OnDatabaseDelete := OnDatabaseDelete or TriggerSetup.Get(EventType::Delete);
             OnDatabaseRename := OnDatabaseRename or TriggerSetup.Get(EventType::Rename);
         end;
-        /*
-                if AJETableEventListenerSetup.Get(TableId) then begin
-                    OnDatabaseInsert := OnDatabaseInsert or AJETableEventListenerSetup.OnInsert;
-                    OnDatabaseModify := OnDatabaseModify or AJETableEventListenerSetup.OnModify;
-                    OnDatabaseDelete := OnDatabaseDelete or AJETableEventListenerSetup.OnDelete;
-                    OnDatabaseRename := OnDatabaseRename or AJETableEventListenerSetup.OnRename;
-                end;
-        */
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::GlobalTriggerManagement, OnAfterOnDatabaseDelete, '', false, false)]
     local procedure OnAfterOnDatabaseDelete(RecRef: RecordRef);
-    var
-        Triggers: List of [Boolean];
-        Fields: List of [Integer];
     begin
-        if TableTriggerSetup.Get(RecRef.Number, Triggers) then
-            if Triggers.Get(EventType::Delete) then
-                if TableFieldsSetup.Get(RecRef.Number, Fields) then
-                    AddEntry(RecRef, Fields, EventType::Delete);
-
-        /*    if AJETableEventListenerSetup.Get(RecRef.Number) then
-                if AJETableEventListenerSetup.OnDelete then
-                    AddEntry(RecRef, EventType::Delete);*/
+        AddEntry(RecRef, EventType::Delete);
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::GlobalTriggerManagement, OnAfterOnDatabaseInsert, '', false, false)]
     local procedure OnAfterOnDatabaseInsert(RecRef: RecordRef);
-    var
-        Triggers: List of [Boolean];
-        Fields: List of [Integer];
     begin
-        if TableTriggerSetup.Get(RecRef.Number, Triggers) then
-            if Triggers.Get(EventType::Insert) then
-                if TableFieldsSetup.Get(RecRef.Number, Fields) then
-                    AddEntry(RecRef, Fields, EventType::Insert);
-
-        /*
-        if AJETableEventListenerSetup.Get(RecRef.Number) then
-            if AJETableEventListenerSetup.OnInsert then
-                AddEntry(RecRef, EventType::Insert);
-                */
+        AddEntry(RecRef, EventType::Insert);
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::GlobalTriggerManagement, OnAfterOnDatabaseModify, '', false, false)]
     local procedure OnAfterOnDatabaseModify(RecRef: RecordRef);
-    var
-        Triggers: List of [Boolean];
-        Fields: List of [Integer];
     begin
-        if TableTriggerSetup.Get(RecRef.Number, Triggers) then
-            if Triggers.Get(EventType::Modify) then
-                if TableFieldsSetup.Get(RecRef.Number, Fields) then
-                    AddEntry(RecRef, Fields, EventType::Modify);
-        /*
-        if AJETableEventListenerSetup.Get(RecRef.Number) then
-            if AJETableEventListenerSetup.OnModify then
-                AddEntry(RecRef, EventType::Modify);
-                */
+        AddEntry(RecRef, EventType::Modify);
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::GlobalTriggerManagement, OnAfterOnDatabaseRename, '', false, false)]
     local procedure OnAfterOnDatabaseRename(RecRef: RecordRef; xRecRef: RecordRef);
-    var
-        Triggers: List of [Boolean];
-        Fields: List of [Integer];
     begin
-        if TableTriggerSetup.Get(RecRef.Number, Triggers) then
-            if Triggers.Get(EventType::Rename) then
-                if TableFieldsSetup.Get(RecRef.Number, Fields) then
-                    AddEntry(RecRef, Fields, EventType::Rename);
-        /*
-        if AJETableEventListenerSetup.Get(RecRef.Number) then
-            if AJETableEventListenerSetup.OnRename then
-                AddEntry(RecRef, EventType::Rename);*/
+        AddEntry(RecRef, EventType::Rename);
     end;
 
     [EventSubscriber(ObjectType::Table, Database::"Test Method Line", OnBeforeModifyEvent, '', false, false)]
@@ -274,7 +221,7 @@ codeunit 50100 "AJE Table Event Listener"
         if (Rec.Function = '') or (Rec.Function = 'OnRun') or (Rec.Result = Rec.Result::" ") then
             exit;
 
-        if Rec.Result = Rec.Result::Skipped then // SetStartTimeOnTestLine of 130454 "Test Runner - Mgt"
+        if Rec.Result = Rec.Result::Skipped then // SetStartTimeOnTestLine() of 130454 "Test Runner - Mgt"
             Rec."AJE Test Run No." := StartTestRun(Rec)
         else // UpdateTestFunctionLine() of 130454 "Test Runner - Mgt"
             StopTestRun(Rec);
@@ -285,16 +232,4 @@ codeunit 50100 "AJE Table Event Listener"
     begin
         Subscribed := true
     end;
-
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Test Runner - Mgt", OnAfterTestMethodRun, '', false, false)]
-    local procedure TestRunnerMgt_OnAfterTestMethodRun(var CurrentTestMethodLine: Record "Test Method Line"; CodeunitID: Integer; CodeunitName: Text[30]; FunctionName: Text[128]; FunctionTestPermissions: TestPermissions; IsSuccess: Boolean)
-    begin
-    end;
-
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Test Runner - Mgt", OnBeforeTestMethodRun, '', false, false)]
-    local procedure TestRunnerMgtOnBeforeTestMethodRun(var CurrentTestMethodLine: Record "Test Method Line"; CodeunitID: Integer; CodeunitName: Text[30]; FunctionName: Text[128]; FunctionTestPermissions: TestPermissions)
-    begin
-    end;
-
-
 }
