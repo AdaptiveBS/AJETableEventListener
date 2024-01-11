@@ -51,13 +51,13 @@ codeunit 50100 "AJE Table Event Listener"
         foreach FieldId in Fields do
             FieldData.Add(FieldId, GetFieldValueAsText(RecRef, FieldId));
 
-        RecordNo += 1;
         if TestRunData.Get(RecRef.Number, RecordData) then
             RecordData.Add(RecordNo, FieldData)
         else begin
             RecordData.Add(RecordNo, FieldData);
             TestRunData.Add(RecRef.Number, RecordData);
         end;
+        RecordNo += 1;
     end;
 
     local procedure AddEntry(RecRef: RecordRef; EvtType: Option)
@@ -95,6 +95,16 @@ codeunit 50100 "AJE Table Event Listener"
             exit(false);
         SetTableSetup();
         exit(true)
+    end;
+
+    local procedure GetNextRecNo(Code: Code[20]) NextRecNo: Integer
+    var
+        ConfigPackageRecord: Record "Config. Package Record";
+    begin
+        ConfigPackageRecord.SetRange("Package Code", Code);
+        if ConfigPackageRecord.FindLast() then
+            NextRecNo := ConfigPackageRecord."No.";
+        NextRecNo += 1;
     end;
 
     local procedure MoveDataToConfigPackageData()
@@ -188,6 +198,7 @@ codeunit 50100 "AJE Table Event Listener"
 
         CurrentTestRunNo := AJEListenerTestRun.Initialize(TestMethodLine);
         ConfigPackage.Get(AJEListenerTestRun."Config. Package Code");
+        RecordNo := GetNextRecNo(ConfigPackage.Code);
         SetTableSetup();
 
         exit(CurrentTestRunNo);
