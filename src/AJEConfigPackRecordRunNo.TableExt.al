@@ -12,8 +12,8 @@ tableextension 50104 AJEConfigPackRecordRunNo extends "Config. Package Record"
         {
             Caption = 'RIMD';
             Editable = false;
-            OptionCaption = 'Rename,Insert,Modify,Delete';
-            OptionMembers = Rename,Insert,Modify,Delete;
+            OptionCaption = ',Insert,Modify,Delete,Rename';
+            OptionMembers = ,Insert,Modify,Delete,Rename;
         }
         field(50102; "AJE Record ID"; RecordId)
         {
@@ -61,12 +61,12 @@ tableextension 50104 AJEConfigPackRecordRunNo extends "Config. Package Record"
     /// <summary>
     /// SetCallStack.
     /// </summary>
-    procedure AJESetCallStack()
+    procedure AJESetCallStack(CallStack: Text)
     var
         OutStream: OutStream;
     begin
         "AJE Call Stack".CreateOutStream(OutStream, TEXTENCODING::UTF16);
-        OutStream.Write(GetCurrCallStack());
+        OutStream.Write(CallStack);
     end;
 
     /// <summary>

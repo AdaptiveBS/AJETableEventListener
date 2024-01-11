@@ -10,7 +10,7 @@ codeunit 50100 "AJE Table Event Listener"
         AJEListenerTestRun: Record "AJE Listener Test Run";
         ConfigPackage: Record "Config. Package";
         Active: Boolean;
-        TestRunData: Dictionary of [Integer, Dictionary of [Integer, Dictionary of [Integer, Dictionary of [Integer, Text]]]]; // [TestRunNo, [TableID, [RecNo, [FieldID, Text]]]]
+        TestRunData: Dictionary of [Integer, Dictionary of [Integer, Dictionary of [Integer, Text]]]; // [TableID, [RecNo, [FieldID, Text]]]]
         TableTriggerSetup: Dictionary of [Integer, List of [Boolean]];
         TableFieldsSetup: Dictionary of [Integer, List of [Integer]];
         CurrentTestRunNo: Integer;
@@ -30,9 +30,6 @@ codeunit 50100 "AJE Table Event Listener"
     var
         AJETableEventListener: Codeunit "AJE Table Event Listener";
     begin
-        //TempAJETableEventListenerEntry.Reset();
-        //TempAJETableEventListenerEntry.DeleteAll();
-
         ClearAll();
         UnbindSubscription(AJETableEventListener);
         if NewActive then
@@ -46,7 +43,6 @@ codeunit 50100 "AJE Table Event Listener"
 
     local procedure AddEntry(RecRef: RecordRef; Fields: List of [Integer]; EvtType: Option): Text
     var
-        TableData: Dictionary of [Integer, Dictionary of [Integer, Dictionary of [Integer, Text]]];
         RecordData: Dictionary of [Integer, Dictionary of [Integer, Text]];
         FieldData: Dictionary of [Integer, Text];
         FieldId: Integer;
@@ -56,17 +52,11 @@ codeunit 50100 "AJE Table Event Listener"
             FieldData.Add(FieldId, GetFieldValueAsText(RecRef, FieldId));
 
         RecordNo += 1;
-        if TestRunData.Get(CurrentTestRunNo, TableData) then begin
-            if TableData.Get(RecRef.Number, RecordData) then
-                RecordData.Add(RecordNo, FieldData)
-            else begin
-                RecordData.Add(RecordNo, FieldData);
-                TableData.Add(RecRef.Number, RecordData);
-            end;
-        end else begin
+        if TestRunData.Get(RecRef.Number, RecordData) then
+            RecordData.Add(RecordNo, FieldData)
+        else begin
             RecordData.Add(RecordNo, FieldData);
-            TableData.Add(RecRef.Number, RecordData);
-            TestRunData.Add(CurrentTestRunNo, TableData);
+            TestRunData.Add(RecRef.Number, RecordData);
         end;
     end;
 
@@ -108,8 +98,55 @@ codeunit 50100 "AJE Table Event Listener"
     end;
 
     local procedure MoveDataToConfigPackageData()
+    var
+        RecordData: Dictionary of [Integer, Dictionary of [Integer, Text]];
+        FieldData: Dictionary of [Integer, Text];
+        FieldId: Integer;
+        RecNo: Integer;
+        TableId: Integer;
+        TxtValue: Text;
     begin
-        // TODO
+        foreach TableId in TestRunData.Keys do begin
+            RecordData := TestRunData.Get(TableId);
+            foreach RecNo in RecordData.Keys do begin
+                FieldData := RecordData.Get(RecNo);
+                SaveRecordDataEntry(TableId, RecNo, FieldData.Get(0));
+                foreach FieldId in FieldData.Keys do begin
+                    TxtValue := FieldData.Get(FieldId);
+                    SaveFieldDataEntry(TableId, RecNo, FieldId, TxtValue);
+                end;
+            end;
+        end;
+    end;
+
+    local procedure SaveFieldDataEntry(TableId: Integer; RecNo: Integer; FieldId: Integer; TxtValue: Text)
+    var
+        ConfigPackageData: Record "Config. Package Data";
+    begin
+        ConfigPackageData."Package Code" := ConfigPackage.Code;
+        ConfigPackageData."Table ID" := TableId;
+        ConfigPackageData."No." := RecNo;
+        ConfigPackageData."Field ID" := FieldId;
+        ConfigPackageData.Value := CopyStr(TxtValue, 1, MaxStrLen(ConfigPackageData.Value));
+        ConfigPackageData.Insert(true);
+    end;
+
+    local procedure SaveRecordDataEntry(TableId: Integer; RecNo: Integer; RIMD: Text)
+    var
+        ConfigPackageRecord: Record "Config. Package Record";
+        RecID: RecordId;
+    begin
+        ConfigPackageRecord."Package Code" := ConfigPackage.Code;
+        ConfigPackageRecord."Table ID" := TableId;
+        ConfigPackageRecord."No." := RecNo;
+        ConfigPackageRecord."AJE Listener Test Run No." := CurrentTestRunNo;
+        Evaluate(ConfigPackageRecord."AJE RIMD", RIMD);
+
+        ConfigPackageRecord.AJESetCallStack('');
+        ConfigPackageRecord."AJE Record ID" := RecID;
+        ConfigPackageRecord."AJE Created DateTime" := 0DT;
+
+        ConfigPackageRecord.Insert(true);
     end;
 
     local procedure SetFieldsSetup(ConfigPackageTable: Record "Config. Package Table"): Boolean
