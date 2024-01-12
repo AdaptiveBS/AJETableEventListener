@@ -620,12 +620,21 @@ page 50110 "AJE Config. Package Records"
 
     trigger OnAfterGetRecord()
     var
+        EventType: Enum "AJE Listener Event Type";
         FieldId: Integer;
     begin
         Clear(MatrixCellData);
         foreach FieldId in Fields do
             if ConfigPackageData.Get(Rec."Package Code", Rec."Table ID", Rec."No.", FieldId) then
-                MatrixCellData.Add(ConfigPackageData.Value);
+                case FieldId of
+                    0: // Event Type
+                        begin
+                            Evaluate(EventType, ConfigPackageData.Value);
+                            MatrixCellData.Add(Format(EventType));
+                        end;
+                    else
+                        MatrixCellData.Add(ConfigPackageData.Value);
+                end;
     end;
 
     trigger OnClosePage()

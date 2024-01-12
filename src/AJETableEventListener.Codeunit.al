@@ -40,13 +40,13 @@ codeunit 50100 "AJE Table Event Listener"
         exit(Active);
     end;
 
-    local procedure AddEntry(RecRef: RecordRef; Fields: List of [Integer]; EvtType: Option): Text
+    local procedure AddEntry(RecRef: RecordRef; Fields: List of [Integer]; EventType: Enum "AJE Listener Event Type"): Text
     var
         RecordData: Dictionary of [Integer, Dictionary of [Integer, Text]];
         FieldData: Dictionary of [Integer, Text];
         FieldId: Integer;
     begin
-        FieldData.Add(0, Format(EvtType));
+        FieldData.Add(0, Format(EventType.AsInteger()));
         foreach FieldId in Fields do
             FieldData.Add(FieldId, GetFieldValueAsText(RecRef, FieldId));
 
@@ -59,15 +59,15 @@ codeunit 50100 "AJE Table Event Listener"
         RecordNo += 1;
     end;
 
-    local procedure AddEntry(RecRef: RecordRef; EvtType: Enum "AJE Listener Event Type")
+    local procedure AddEntry(RecRef: RecordRef; EventType: Enum "AJE Listener Event Type")
     var
         Triggers: List of [Boolean];
         Fields: List of [Integer];
     begin
         if TableTriggerSetup.Get(RecRef.Number, Triggers) then
-            if Triggers.Get(EvtType.AsInteger()) then
+            if Triggers.Get(EventType.AsInteger()) then
                 if TableFieldsSetup.Get(RecRef.Number, Fields) then
-                    AddEntry(RecRef, Fields, EvtType.AsInteger());
+                    AddEntry(RecRef, Fields, EventType);
     end;
 
     local procedure EventTypeAsInt(Type: Enum "AJE Listener Event Type"): Integer
@@ -83,7 +83,7 @@ codeunit 50100 "AJE Table Event Listener"
             FldRef := RecRef.Field(FieldId);
             if FldRef.Class = FldRef.Class::FlowField then
                 FldRef.CalcField();
-            Value := Format(FldRef.Value(), 0, 9);
+            Value := Format(FldRef.Value());
         end;
     end;
 
@@ -145,7 +145,7 @@ codeunit 50100 "AJE Table Event Listener"
         ConfigPackageData.Insert(true);
     end;
 
-    local procedure SaveRecordDataEntry(TableId: Integer; RecNo: Integer; EvtType: Text)
+    local procedure SaveRecordDataEntry(TableId: Integer; RecNo: Integer; EventTypeInt: Text)
     var
         ConfigPackageRecord: Record "Config. Package Record";
         RecID: RecordId;
@@ -154,7 +154,7 @@ codeunit 50100 "AJE Table Event Listener"
         ConfigPackageRecord."Table ID" := TableId;
         ConfigPackageRecord."No." := RecNo;
         ConfigPackageRecord."AJE Listener Test Run No." := CurrentTestRunNo;
-        Evaluate(ConfigPackageRecord."AJE Event Type", EvtType);
+        Evaluate(ConfigPackageRecord."AJE Event Type", EventTypeInt, 9);
 
         ConfigPackageRecord.AJESetCallStack('');
         ConfigPackageRecord."AJE Record ID" := RecID;
