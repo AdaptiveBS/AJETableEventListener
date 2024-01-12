@@ -56,7 +56,11 @@ page 50107 "AJE Listener Test Runs"
                         Message(ErrorMessageWithStackTraceTxt);
                     end;
                 }
-
+                field("Execution Time"; Rec."Execution Time")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the execution time of the run.';
+                }
                 field("Start Time"; Rec."Start Time")
                 {
                     ApplicationArea = All;
@@ -66,6 +70,7 @@ page 50107 "AJE Listener Test Runs"
                 {
                     ApplicationArea = All;
                     ToolTip = 'Specifies the time when the run was finished.';
+                    Visible = false;
                 }
                 field("User ID"; Rec."User ID")
                 {

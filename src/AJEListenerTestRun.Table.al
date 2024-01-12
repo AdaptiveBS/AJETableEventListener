@@ -93,7 +93,7 @@ table 50105 "AJE Listener Test Run"
     end;
 
     var
-        ErrorMessageWithCallStackErr: Label 'Error Message: %1 - Error Call Stack: ', Locked = true;
+        ErrorMessageWithCallStackErr: Label 'Error Message:\%1\\Error Call Stack:\%2', Locked = true;
 
     procedure GetErrorCallStack(): Text
     var
@@ -112,16 +112,13 @@ table 50105 "AJE Listener Test Run"
     procedure GetErrorMessageWithStackTrace(): Text
     var
         FullErrorMessage: Text;
-        NewLine: Text;
     begin
         FullErrorMessage := GetFullErrorMessage();
 
         if FullErrorMessage = '' then
             exit('');
 
-        NewLine[1] := 10;
-        FullErrorMessage := StrSubstNo(ErrorMessageWithCallStackErr, FullErrorMessage);
-        FullErrorMessage += NewLine + NewLine + GetErrorCallStack();
+        FullErrorMessage := StrSubstNo(ErrorMessageWithCallStackErr, FullErrorMessage, GetErrorCallStack());
         exit(FullErrorMessage);
     end;
 

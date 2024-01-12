@@ -14,6 +14,11 @@ page 50109 "AJE Config. Pack Rec. Subform"
             repeater(Control1)
             {
                 ShowCaption = false;
+                field("AJE Event Type"; Rec."AJE Event Type")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the type of the change - rename, insert, modify, or delete.';
+                }
                 field("Table ID"; Rec."Table ID")
                 {
                     ApplicationArea = All;
@@ -24,15 +29,6 @@ page 50109 "AJE Config. Pack Rec. Subform"
                     ApplicationArea = All;
                     Caption = 'Record ID';
                 }
-                field("AJE Event Type"; Rec."AJE Event Type")
-                {
-                    ApplicationArea = All;
-                    ToolTip = 'Specifies the type of the change - rename, insert, modify, or delete.';
-                }
-                field("AJE Created DateTime"; Rec."AJE Created DateTime")
-                {
-                    ApplicationArea = All;
-                }
                 field("AJE Call Stack"; CallStack)
                 {
                     ApplicationArea = All;
@@ -42,6 +38,10 @@ page 50109 "AJE Config. Pack Rec. Subform"
                     begin
                         Rec.AJEShowCallStack();
                     end;
+                }
+                field("AJE Created DateTime"; Rec."AJE Created DateTime")
+                {
+                    ApplicationArea = All;
                 }
                 field("Rec No."; Rec."No.")
                 {

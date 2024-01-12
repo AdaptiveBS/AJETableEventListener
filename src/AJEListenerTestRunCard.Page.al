@@ -54,12 +54,6 @@ page 50108 "AJE Listener Test Run Card"
                     ApplicationArea = All;
                     ToolTip = 'Specifies the execution time of the run.';
                 }
-                field("User ID"; Rec."User ID")
-                {
-                    ApplicationArea = All;
-                    Importance = Additional;
-                    ToolTip = 'Specifies the user who created the run.';
-                }
                 field(Result; Rec.Result)
                 {
                     ApplicationArea = All;
@@ -102,6 +96,12 @@ page 50108 "AJE Listener Test Run Card"
                             Message(ErrorMessageWithStackTraceTxt);
                         end;
                     }
+                }
+                field("User ID"; Rec."User ID")
+                {
+                    ApplicationArea = All;
+                    Importance = Additional;
+                    ToolTip = 'Specifies the user who created the run.';
                 }
             }
             part(Records; "AJE Config. Pack Rec. Subform")
