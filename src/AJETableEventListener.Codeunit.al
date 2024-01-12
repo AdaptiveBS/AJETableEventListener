@@ -40,13 +40,16 @@ codeunit 50100 "AJE Table Event Listener"
         exit(Active);
     end;
 
-    local procedure AddEntry(RecRef: RecordRef; Fields: List of [Integer]; EventType: Enum "AJE Listener Event Type"): Text
+    local procedure AddEntry(RecRef: RecordRef; Fields: List of [Integer]; EventType: Enum "AJE Listener Event Type"; CallStack: Text): Text
     var
         RecordData: Dictionary of [Integer, Dictionary of [Integer, Text]];
         FieldData: Dictionary of [Integer, Text];
         FieldId: Integer;
     begin
-        FieldData.Add(0, Format(EventType.AsInteger()));
+        FieldData.Add(-3, CallStack);
+        FieldData.Add(-2, Format(RecRef.RecordId()));
+        FieldData.Add(-1, Format(EventType.AsInteger()));
+        FieldData.Add(0, Format(RecRef.IsTemporary()));
         foreach FieldId in Fields do
             FieldData.Add(FieldId, GetFieldValueAsText(RecRef, FieldId));
 
@@ -67,12 +70,23 @@ codeunit 50100 "AJE Table Event Listener"
         if TableTriggerSetup.Get(RecRef.Number, Triggers) then
             if Triggers.Get(EventType.AsInteger()) then
                 if TableFieldsSetup.Get(RecRef.Number, Fields) then
-                    AddEntry(RecRef, Fields, EventType);
+                    AddEntry(RecRef, Fields, EventType, GetCurrCallStack());
     end;
 
     local procedure EventTypeAsInt(Type: Enum "AJE Listener Event Type"): Integer
     begin
         exit(Type.AsInteger());
+    end;
+
+    local procedure GetCurrCallStack() CallStack: Text;
+    var
+        SubString: Text;
+    begin
+        if ThrowError() then;
+        CallStack := GetLastErrorCallStack();
+        SubString := '"Global Triggers"(CodeUnit 2000000002).OnDatabase';
+        CallStack := CopyStr(CallStack, StrPos(CallStack, SubString) + StrLen(SubString));
+        CallStack := CopyStr(CallStack, StrPos(CallStack, '\') + 1);
     end;
 
     local procedure GetFieldValueAsText(RecRef: RecordRef; FieldId: Integer) Value: Text
@@ -125,7 +139,7 @@ codeunit 50100 "AJE Table Event Listener"
             RecordData := TestRunData.Get(TableId);
             foreach RecNo in RecordData.Keys do begin
                 FieldData := RecordData.Get(RecNo);
-                SaveRecordDataEntry(TableId, RecNo, FieldData.Get(0));
+                SaveRecordDataEntry(TableId, RecNo, FieldData);
                 foreach FieldId in FieldData.Keys do begin
                     TxtValue := FieldData.Get(FieldId);
                     SaveFieldDataEntry(TableId, RecNo, FieldId, TxtValue);
@@ -146,21 +160,18 @@ codeunit 50100 "AJE Table Event Listener"
         ConfigPackageData.Insert(true);
     end;
 
-    local procedure SaveRecordDataEntry(TableId: Integer; RecNo: Integer; EventTypeInt: Text)
+    local procedure SaveRecordDataEntry(TableId: Integer; RecNo: Integer; FieldData: Dictionary of [Integer, Text])
     var
         ConfigPackageRecord: Record "Config. Package Record";
-        RecID: RecordId;
     begin
         ConfigPackageRecord."Package Code" := ConfigPackage.Code;
         ConfigPackageRecord."Table ID" := TableId;
         ConfigPackageRecord."No." := RecNo;
         ConfigPackageRecord."AJE Listener Test Run No." := CurrentTestRunNo;
-        Evaluate(ConfigPackageRecord."AJE Event Type", EventTypeInt, 9);
-
-        ConfigPackageRecord.AJESetCallStack('');
-        ConfigPackageRecord."AJE Record ID" := RecID;
-        ConfigPackageRecord."AJE Created DateTime" := 0DT;
-
+        Evaluate(ConfigPackageRecord."AJE Temporary", FieldData.Get(0));
+        Evaluate(ConfigPackageRecord."AJE Event Type", FieldData.Get(-1), 9);
+        Evaluate(ConfigPackageRecord."AJE Record ID", FieldData.Get(-2));
+        ConfigPackageRecord.AJESetCallStack(FieldData.Get(-3));
         ConfigPackageRecord.Insert(true);
     end;
 
@@ -224,6 +235,13 @@ codeunit 50100 "AJE Table Event Listener"
         Clear(TableTriggerSetup);
         Clear(TableFieldsSetup);
         Clear(TestRunData);
+    end;
+
+    [TryFunction]
+    local procedure ThrowError()
+    begin
+        // Throw an error to get the call stack by GetLastErrorCallstack
+        Error('');
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::GlobalTriggerManagement, OnAfterGetDatabaseTableTriggerSetup, '', false, false)]
