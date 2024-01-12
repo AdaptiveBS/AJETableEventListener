@@ -16,15 +16,6 @@ codeunit 50100 "AJE Table Event Listener"
         CurrentTestRunNo: Integer;
         RecordNo: Integer;
 
-    /// <summary>
-    /// GetEntries to show entries in the Listener page.
-    /// </summary>
-    /// <param name="TmpAJETableEventListenerEntry">Temporary VAR Record "AJE Table Event Listener Entry".</param>
-    procedure GetEntries(var TmpAJETableEventListenerEntry: Record "AJE Table Event Listener Entry" temporary)
-    begin
-        //TmpAJETableEventListenerEntry.Copy(TempAJETableEventListenerEntry, true);
-    end;
-
     internal procedure Activate(NewActive: Boolean)
     var
         AJETableEventListener: Codeunit "AJE Table Event Listener";
@@ -49,7 +40,7 @@ codeunit 50100 "AJE Table Event Listener"
         FieldData.Add(-3, CallStack);
         FieldData.Add(-2, Format(RecRef.RecordId()));
         FieldData.Add(-1, Format(EventType.AsInteger()));
-        FieldData.Add(0, Format(RecRef.IsTemporary()));
+        // FieldData.Add(0, Format(RecRef.IsTemporary())); // Rec is never Temporary 
 
         foreach FieldId in Fields.Get(true) do
             FieldData.Add(FieldId, GetFieldValueAsText(RecRef, FieldId));
@@ -146,7 +137,7 @@ codeunit 50100 "AJE Table Event Listener"
                 SaveRecordDataEntry(TableId, RecNo, FieldData);
 
                 SaveFieldDataEntry(TableId, RecNo, -1, FieldData.Get(-1), false);
-                SaveFieldDataEntry(TableId, RecNo, 0, FieldData.Get(0), false);
+                // SaveFieldDataEntry(TableId, RecNo, 0, FieldData.Get(0), false);
                 foreach FieldId in Fields.Get(true) do // PrimaryKey
                     SaveFieldDataEntry(TableId, RecNo, FieldId, FieldData.Get(FieldId), true);
                 foreach FieldId in Fields.Get(false) do // non PrimaryKey
@@ -176,7 +167,7 @@ codeunit 50100 "AJE Table Event Listener"
         ConfigPackageRecord."Table ID" := TableId;
         ConfigPackageRecord."No." := RecNo;
         ConfigPackageRecord."AJE Listener Test Run No." := CurrentTestRunNo;
-        Evaluate(ConfigPackageRecord."AJE Temporary", FieldData.Get(0));
+        // Evaluate(ConfigPackageRecord."AJE Temporary", FieldData.Get(0));
         Evaluate(ConfigPackageRecord."AJE Event Type", FieldData.Get(-1), 9);
         Evaluate(ConfigPackageRecord."AJE Record ID", FieldData.Get(-2));
         ConfigPackageRecord.AJESetCallStack(FieldData.Get(-3));
@@ -318,11 +309,5 @@ codeunit 50100 "AJE Table Event Listener"
             Rec."AJE Test Run No." := StartTestRun(Rec)
         else // UpdateTestFunctionLine() of 130454 "Test Runner - Mgt"
             StopTestRun(Rec);
-    end;
-
-    [EventSubscriber(ObjectType::Page, Page::"AJE Table Event Listener", OnListenerSubscribed, '', false, false)]
-    local procedure OnListenerSubscribed(var Subscribed: Boolean);
-    begin
-        Subscribed := true
     end;
 }
