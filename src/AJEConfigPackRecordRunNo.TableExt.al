@@ -98,39 +98,48 @@ tableextension 50104 AJEConfigPackRecordRunNo extends "Config. Package Record"
         ConfigPackageRecord.SetRange("Table ID", "Table ID");
         ConfigPackageRecords.SetTableView(ConfigPackageRecord);
         ConfigPackageRecords.LookupMode(true);
-        ConfigPackageRecords.Load(Fields, FieldCaptions, GetTableCaption());
+        ConfigPackageRecords.Load(Fields, FieldCaptions);
         ConfigPackageRecords.RunModal();
+    end;
+
+    local procedure FilterDataForRecord(var ConfigPackageData: Record "Config. Package Data")
+    begin
+        ConfigPackageData.SetRange("Package Code", Rec."Package Code");
+        ConfigPackageData.SetRange("Table ID", Rec."Table ID");
+        ConfigPackageData.SetRange("No.", Rec."No.");
+        ConfigPackageData.SetFilter("Field ID", '>0');
+    end;
+
+    local procedure GetFieldCaption(TableID: Integer; FieldID: Integer): Text
+    var
+        Field: Record Field;
+    begin
+        Field.Get(TableID, FieldID);
+        exit(Field."Field Caption");
     end;
 
     local procedure GetFieldsCaptions(var Fields: List of [Integer]; var FieldCaptions: List of [Text])
     var
         ConfigPackageData: Record "Config. Package Data";
-        Field: Record Field;
     begin
-        ConfigPackageData.SetRange("Package Code", Rec."Package Code");
-        ConfigPackageData.SetRange("Table ID", Rec."Table ID");
-        ConfigPackageData.SetRange("No.", Rec."No.");
-        ConfigPackageData.SetFilter("Field ID", '>-2'); // to skip CallStack and RecID data
+        Fields.Add(-1);
+        FieldCaptions.Add('Event Type');
+        Fields.Add(0);
+        FieldCaptions.Add('Temporary');
+
+        FilterDataForRecord(ConfigPackageData);
+        ConfigPackageData.SetRange(Invalid, true); // PrimaryKey 
         if ConfigPackageData.FindSet() then
             repeat
-                case ConfigPackageData."Field ID" of
-                    -1:
-                        Field."Field Caption" := 'Event Type';
-                    0:
-                        Field."Field Caption" := 'Temporary';
-                    else
-                        Field.Get(ConfigPackageData."Table ID", ConfigPackageData."Field ID");
-                end;
                 Fields.Add(ConfigPackageData."Field ID");
-                FieldCaptions.Add(Field."Field Caption");
+                FieldCaptions.Add(GetFieldCaption(ConfigPackageData."Table ID", ConfigPackageData."Field ID"));
             until ConfigPackageData.Next() = 0;
-    end;
 
-    local procedure GetTableCaption(): Text[80]
-    var
-        TableMetadata: Record "Table Metadata";
-    begin
-        TableMetadata.Get("Table ID");
-        exit(TableMetadata.Caption);
+        ConfigPackageData.SetRange(Invalid, false); // non PrimaryKey 
+        if ConfigPackageData.FindSet() then
+            repeat
+                Fields.Add(ConfigPackageData."Field ID");
+                FieldCaptions.Add(GetFieldCaption(ConfigPackageData."Table ID", ConfigPackageData."Field ID"));
+            until ConfigPackageData.Next() = 0;
     end;
 }
