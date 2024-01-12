@@ -10,9 +10,9 @@ codeunit 50100 "AJE Table Event Listener"
         AJEListenerTestRun: Record "AJE Listener Test Run";
         ConfigPackage: Record "Config. Package";
         Active: Boolean;
+        TableFieldsSetup: Dictionary of [Integer, Dictionary of [Boolean, List of [Integer]]];
         TestRunData: Dictionary of [Integer, Dictionary of [Integer, Dictionary of [Integer, Text]]]; // [TableID, [RecNo, [FieldID, Text]]]]
         TableTriggerSetup: Dictionary of [Integer, List of [Boolean]];
-        TableFieldsSetup: Dictionary of [Integer, List of [Integer]];
         CurrentTestRunNo: Integer;
         RecordNo: Integer;
 
@@ -40,7 +40,7 @@ codeunit 50100 "AJE Table Event Listener"
         exit(Active);
     end;
 
-    local procedure AddEntry(RecRef: RecordRef; Fields: List of [Integer]; EventType: Enum "AJE Listener Event Type"; CallStack: Text): Text
+    local procedure AddEntry(RecRef: RecordRef; Fields: Dictionary of [Boolean, List of [Integer]]; EventType: Enum "AJE Listener Event Type"; CallStack: Text): Text
     var
         RecordData: Dictionary of [Integer, Dictionary of [Integer, Text]];
         FieldData: Dictionary of [Integer, Text];
@@ -50,7 +50,10 @@ codeunit 50100 "AJE Table Event Listener"
         FieldData.Add(-2, Format(RecRef.RecordId()));
         FieldData.Add(-1, Format(EventType.AsInteger()));
         FieldData.Add(0, Format(RecRef.IsTemporary()));
-        foreach FieldId in Fields do
+
+        foreach FieldId in Fields.Get(true) do
+            FieldData.Add(FieldId, GetFieldValueAsText(RecRef, FieldId));
+        foreach FieldId in Fields.Get(false) do
             FieldData.Add(FieldId, GetFieldValueAsText(RecRef, FieldId));
 
         if TestRunData.Get(RecRef.Number, RecordData) then
@@ -64,8 +67,8 @@ codeunit 50100 "AJE Table Event Listener"
 
     local procedure AddEntry(RecRef: RecordRef; EventType: Enum "AJE Listener Event Type")
     var
+        Fields: Dictionary of [Boolean, List of [Integer]];
         Triggers: List of [Boolean];
-        Fields: List of [Integer];
     begin
         if TableTriggerSetup.Get(RecRef.Number, Triggers) then
             if Triggers.Get(EventType.AsInteger()) then
@@ -128,27 +131,28 @@ codeunit 50100 "AJE Table Event Listener"
 
     local procedure MoveDataToConfigPackageData()
     var
+        Fields: Dictionary of [Boolean, List of [Integer]];
         RecordData: Dictionary of [Integer, Dictionary of [Integer, Text]];
         FieldData: Dictionary of [Integer, Text];
         FieldId: Integer;
         RecNo: Integer;
         TableId: Integer;
-        TxtValue: Text;
     begin
         foreach TableId in TestRunData.Keys do begin
+            Fields := TableFieldsSetup.Get(TableId);
             RecordData := TestRunData.Get(TableId);
             foreach RecNo in RecordData.Keys do begin
                 FieldData := RecordData.Get(RecNo);
                 SaveRecordDataEntry(TableId, RecNo, FieldData);
-                foreach FieldId in FieldData.Keys do begin
-                    TxtValue := FieldData.Get(FieldId);
-                    SaveFieldDataEntry(TableId, RecNo, FieldId, TxtValue);
-                end;
+                foreach FieldId in Fields.Get(true) do
+                    SaveFieldDataEntry(TableId, RecNo, FieldId, FieldData.Get(FieldId), true);
+                foreach FieldId in FieldData.Keys do
+                    SaveFieldDataEntry(TableId, RecNo, FieldId, FieldData.Get(FieldId), false);
             end;
         end;
     end;
 
-    local procedure SaveFieldDataEntry(TableId: Integer; RecNo: Integer; FieldId: Integer; TxtValue: Text)
+    local procedure SaveFieldDataEntry(TableId: Integer; RecNo: Integer; FieldId: Integer; TxtValue: Text; PrimaryKey: Boolean)
     var
         ConfigPackageData: Record "Config. Package Data";
     begin
@@ -157,6 +161,7 @@ codeunit 50100 "AJE Table Event Listener"
         ConfigPackageData."No." := RecNo;
         ConfigPackageData."Field ID" := FieldId;
         ConfigPackageData.Value := CopyStr(TxtValue, 1, MaxStrLen(ConfigPackageData.Value));
+        ConfigPackageData.Invalid := PrimaryKey; // reused an existing boolean field for PrimaryKey flag
         ConfigPackageData.Insert(true);
     end;
 
@@ -178,15 +183,29 @@ codeunit 50100 "AJE Table Event Listener"
     local procedure SetFieldsSetup(ConfigPackageTable: Record "Config. Package Table"): Boolean
     var
         ConfigPackageField: Record "Config. Package Field";
-        Fields: List of [Integer];
+        Fields: Dictionary of [Boolean, List of [Integer]];
+        NonPKFields: List of [Integer];
+        PKFields: List of [Integer];
     begin
         ConfigPackageField.SetRange("Package Code", ConfigPackageTable."Package Code");
         ConfigPackageField.SetRange("Table ID", ConfigPackageTable."Table ID");
         ConfigPackageField.SetRange("Include Field", true);
+        ConfigPackageField.SetRange("Primary Key", true);
         if ConfigPackageField.FindSet() then
             repeat
-                Fields.Add(ConfigPackageField."Field ID");
+                PKFields.Add(ConfigPackageField."Field ID");
             until ConfigPackageField.Next() = 0;
+        if PKFields.Count() > 0 then
+            Fields.Add(true, PKFields);
+
+        ConfigPackageField.SetRange("Primary Key", false);
+        if ConfigPackageField.FindSet() then
+            repeat
+                NonPKFields.Add(ConfigPackageField."Field ID");
+            until ConfigPackageField.Next() = 0;
+        if NonPKFields.Count() > 0 then
+            Fields.Add(false, NonPKFields);
+
         if Fields.Count() = 0 then
             exit(false);
 
