@@ -31,6 +31,32 @@ page 50107 "AJE Listener Test Runs"
                     ApplicationArea = All;
                     ToolTip = 'Specifies the confiuration package code that defines tables and fields to be stored.';
                 }
+                field(Result; Rec.Result)
+                {
+                    ApplicationArea = All;
+                    BlankZero = true;
+                    Caption = 'Result';
+                    Editable = false;
+                    Style = Favorable;
+                    StyleExpr = ResultEmphasize;
+                    Tooltip = 'Specifies whether the test run passed, failed or were skipped.';
+                }
+                field("Error Message"; ErrorMessageWithStackTraceTxt)
+                {
+                    ApplicationArea = All;
+                    Caption = 'Error Message';
+                    DrillDown = true;
+                    Editable = false;
+                    Style = Unfavorable;
+                    StyleExpr = true;
+                    ToolTip = 'Specifies full error message with stack trace';
+
+                    trigger OnDrillDown()
+                    begin
+                        Message(ErrorMessageWithStackTraceTxt);
+                    end;
+                }
+
                 field("Start Time"; Rec."Start Time")
                 {
                     ApplicationArea = All;
@@ -50,4 +76,14 @@ page 50107 "AJE Listener Test Runs"
             }
         }
     }
+
+    trigger OnAfterGetRecord()
+    begin
+        ErrorMessageWithStackTraceTxt := Rec.GetErrorMessageWithStackTrace();
+        ResultEmphasize := Rec.Result = Rec.Result::Success;
+    end;
+
+    var
+        ResultEmphasize: Boolean;
+        ErrorMessageWithStackTraceTxt: Text;
 }

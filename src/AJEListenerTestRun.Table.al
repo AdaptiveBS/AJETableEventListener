@@ -25,9 +25,8 @@ table 50105 "AJE Listener Test Run"
         field(5; Result; Option)
         {
             Caption = 'Result';
-            InitValue = Incomplete;
-            OptionCaption = 'Passed,Failed,Inconclusive,Incomplete';
-            OptionMembers = Passed,Failed,Inconclusive,Incomplete;
+            OptionCaption = ' ,Failure,Success,Skipped';
+            OptionMembers = " ",Failure,Success,Skipped;
         }
         field(6; "Codeunit ID"; Integer)
         {
@@ -93,6 +92,9 @@ table 50105 "AJE Listener Test Run"
         "Execution Time" := "Finish Time" - "Start Time";
     end;
 
+    var
+        ErrorMessageWithCallStackErr: Label 'Error Message: %1 - Error Call Stack: ', Locked = true;
+
     procedure GetErrorCallStack(): Text
     var
         ErrorCallStackInStream: InStream;
@@ -105,6 +107,22 @@ table 50105 "AJE Listener Test Run"
         "Error Call Stack".CreateInStream(ErrorCallStackInStream, TEXTENCODING::UTF16);
         ErrorCallStackInStream.ReadText(ErrorCallStack);
         exit(ErrorCallStack);
+    end;
+
+    procedure GetErrorMessageWithStackTrace(): Text
+    var
+        FullErrorMessage: Text;
+        NewLine: Text;
+    begin
+        FullErrorMessage := GetFullErrorMessage();
+
+        if FullErrorMessage = '' then
+            exit('');
+
+        NewLine[1] := 10;
+        FullErrorMessage := StrSubstNo(ErrorMessageWithCallStackErr, FullErrorMessage);
+        FullErrorMessage += NewLine + NewLine + GetErrorCallStack();
+        exit(FullErrorMessage);
     end;
 
     procedure GetFullErrorMessage(): Text
