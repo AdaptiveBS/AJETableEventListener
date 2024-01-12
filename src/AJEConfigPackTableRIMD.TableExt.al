@@ -25,7 +25,7 @@ tableextension 50100 AJEConfigPackTableRIMD extends "Config. Package Table"
         "AJE Insert" := true;
         "AJE Modify" := true;
         "AJE Delete" := true;
-        "AJE Rename" := true;
+        "AJE Rename" := false;
     end;
 
     procedure AJEGetTriggerSetup() TriggerSetup: List of [Boolean]

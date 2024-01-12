@@ -105,6 +105,7 @@ codeunit 50100 "AJE Table Event Listener"
     var
         ConfigPackageRecord: Record "Config. Package Record";
     begin
+        ConfigPackageRecord.SetCurrentKey("No.");
         ConfigPackageRecord.SetRange("Package Code", Code);
         if ConfigPackageRecord.FindLast() then
             NextRecNo := ConfigPackageRecord."No.";
