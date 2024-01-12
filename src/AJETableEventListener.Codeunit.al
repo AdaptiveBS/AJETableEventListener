@@ -144,9 +144,12 @@ codeunit 50100 "AJE Table Event Listener"
             foreach RecNo in RecordData.Keys do begin
                 FieldData := RecordData.Get(RecNo);
                 SaveRecordDataEntry(TableId, RecNo, FieldData);
-                foreach FieldId in Fields.Get(true) do
+
+                SaveFieldDataEntry(TableId, RecNo, -1, FieldData.Get(-1), false);
+                SaveFieldDataEntry(TableId, RecNo, 0, FieldData.Get(0), false);
+                foreach FieldId in Fields.Get(true) do // PrimaryKey
                     SaveFieldDataEntry(TableId, RecNo, FieldId, FieldData.Get(FieldId), true);
-                foreach FieldId in FieldData.Keys do
+                foreach FieldId in Fields.Get(false) do // non PrimaryKey
                     SaveFieldDataEntry(TableId, RecNo, FieldId, FieldData.Get(FieldId), false);
             end;
         end;
