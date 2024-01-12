@@ -29,6 +29,11 @@ page 50109 "AJE Config. Pack Rec. Subform"
                     ApplicationArea = All;
                     Caption = 'Record ID';
                 }
+                field("AJE Temporary"; Rec."AJE Temporary")
+                {
+                    ApplicationArea = All;
+                    Caption = 'Temporary';
+                }
                 field("AJE Call Stack"; CallStack)
                 {
                     ApplicationArea = All;

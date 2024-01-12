@@ -26,6 +26,10 @@ tableextension 50104 AJEConfigPackRecordRunNo extends "Config. Package Record"
         {
             Caption = 'Created DateTime';
         }
+        field(50105; "AJE Temporary"; Boolean)
+        {
+            Caption = 'Temporary';
+        }
     }
 
     keys
@@ -98,17 +102,6 @@ tableextension 50104 AJEConfigPackRecordRunNo extends "Config. Package Record"
         ConfigPackageRecords.RunModal();
     end;
 
-    local procedure GetCurrCallStack() CallStack: Text;
-    var
-        SubString: Text;
-    begin
-        if ThrowError() then;
-        CallStack := GetLastErrorCallStack();
-        SubString := '"Global Triggers"(CodeUnit 2000000002).OnDatabase';
-        CallStack := CopyStr(CallStack, StrPos(CallStack, SubString) + StrLen(SubString));
-        CallStack := CopyStr(CallStack, StrPos(CallStack, '\') + 1);
-    end;
-
     local procedure GetFieldsCaptions(var Fields: List of [Integer]; var FieldCaptions: List of [Text])
     var
         ConfigPackageData: Record "Config. Package Data";
@@ -117,11 +110,14 @@ tableextension 50104 AJEConfigPackRecordRunNo extends "Config. Package Record"
         ConfigPackageData.SetRange("Package Code", Rec."Package Code");
         ConfigPackageData.SetRange("Table ID", Rec."Table ID");
         ConfigPackageData.SetRange("No.", Rec."No.");
+        ConfigPackageData.SetFilter("Field ID", '>-2'); // to skip CallStack and RecID data
         if ConfigPackageData.FindSet() then
             repeat
                 case ConfigPackageData."Field ID" of
-                    0: // RIMD
-                        Field."Field Caption" := 'RIMD';
+                    -1:
+                        Field."Field Caption" := 'Event Type';
+                    0:
+                        Field."Field Caption" := 'Temporary';
                     else
                         Field.Get(ConfigPackageData."Table ID", ConfigPackageData."Field ID");
                 end;
@@ -137,12 +133,4 @@ tableextension 50104 AJEConfigPackRecordRunNo extends "Config. Package Record"
         TableMetadata.Get("Table ID");
         exit(TableMetadata.Caption);
     end;
-
-    [TryFunction]
-    local procedure ThrowError()
-    begin
-        // Throw an error to get the call stack by GetLastErrorCallstack
-        Error('');
-    end;
-
 }

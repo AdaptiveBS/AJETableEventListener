@@ -627,7 +627,7 @@ page 50110 "AJE Config. Package Records"
         foreach FieldId in Fields do
             if ConfigPackageData.Get(Rec."Package Code", Rec."Table ID", Rec."No.", FieldId) then
                 case FieldId of
-                    0: // Event Type
+                    -1: // Event Type
                         begin
                             Evaluate(EventType, ConfigPackageData.Value);
                             MatrixCellData.Add(Format(EventType));
