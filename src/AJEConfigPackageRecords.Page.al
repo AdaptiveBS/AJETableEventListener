@@ -623,6 +623,7 @@ page 50110 "AJE Config. Package Records"
         EventType: Enum "AJE Listener Event Type";
         FieldId: Integer;
     begin
+        FormCaption := Format(Rec."AJE Record ID");
         Clear(MatrixCellData);
         foreach FieldId in Fields do
             if ConfigPackageData.Get(Rec."Package Code", Rec."Table ID", Rec."No.", FieldId) then
@@ -760,12 +761,11 @@ page 50110 "AJE Config. Package Records"
         MatrixColumnCaptions: List of [Text];
         FormCaption: Text;
 
-    procedure Load(NewFields: List of [Integer]; NewMatrixColumnCaptions: List of [Text]; NewFormCaption: Text)
+    procedure Load(NewFields: List of [Integer]; NewMatrixColumnCaptions: List of [Text])
     begin
         Fields := NewFields;
         FieldsCount := Fields.Count;
         MatrixColumnCaptions := NewMatrixColumnCaptions;
-        FormCaption := NewFormCaption;
     end;
 
     local procedure GetMatrixCellData(FieldIndex: Integer): Text
