@@ -124,8 +124,8 @@ tableextension 50104 AJEConfigPackRecordRunNo extends "Config. Package Record"
     begin
         Fields.Add(-1);
         FieldCaptions.Add('Event Type');
-        Fields.Add(0);
-        FieldCaptions.Add('Temporary');
+        //Fields.Add(0);
+        //FieldCaptions.Add('Temporary');
 
         FilterDataForRecord(ConfigPackageData);
         ConfigPackageData.SetRange(Invalid, true); // PrimaryKey 
