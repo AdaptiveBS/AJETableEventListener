@@ -31,6 +31,26 @@ codeunit 50100 "AJE Table Event Listener"
         exit(Active);
     end;
 
+    internal procedure StartTestRun(var ManualAJEListenerTestRun: Record "AJE Listener Test Run"): Boolean;
+    begin
+        CheckAlreadyStartedRun();
+        if not ManualAJEListenerTestRun."All Tables" then
+            ManualAJEListenerTestRun.TestField("Config. Package Code");
+
+        AJEListenerTestRun := ManualAJEListenerTestRun;
+        CurrentTestRunNo := AJEListenerTestRun."No.";
+        ConfigPackage.Get(AJEListenerTestRun."Config. Package Code");
+        RecordNo := GetNextRecNo(ConfigPackage.Code);
+        SetTableSetup();
+    end;
+
+    internal procedure StopTestRun(var ManualAJEListenerTestRun: Record "AJE Listener Test Run"): Boolean
+    begin
+        MoveDataToConfigPackageData();
+        ClearData();
+        exit(true);
+    end;
+
     local procedure AddEntry(RecRef: RecordRef; Fields: Dictionary of [Boolean, List of [Integer]]; EventType: Enum "AJE Listener Event Type"; CallStack: Text): Text
     var
         RecordData: Dictionary of [Integer, Dictionary of [Integer, Text]];
@@ -65,6 +85,22 @@ codeunit 50100 "AJE Table Event Listener"
             if Triggers.Get(EventType.AsInteger()) then
                 if TableFieldsSetup.Get(RecRef.Number, Fields) then
                     AddEntry(RecRef, Fields, EventType, GetCurrCallStack());
+    end;
+
+    local procedure CheckAlreadyStartedRun()
+    begin
+        if CurrentTestRunNo <> 0 then
+            Error('Run #%1 is already started. Finish it first to start a new one.', CurrentTestRunNo);
+    end;
+
+    local procedure ClearData()
+    begin
+        CurrentTestRunNo := 0;
+        Clear(AJEListenerTestRun);
+        Clear(ConfigPackage);
+        Clear(TableTriggerSetup);
+        Clear(TableFieldsSetup);
+        Clear(TestRunData);
     end;
 
     local procedure EventTypeAsInt(Type: Enum "AJE Listener Event Type"): Integer
@@ -222,6 +258,8 @@ codeunit 50100 "AJE Table Event Listener"
 
     local procedure StartTestRun(var TestMethodLine: Record "Test Method Line"): Integer
     begin
+        CheckAlreadyStartedRun();
+
         if TestMethodLine."AJE Config. Pack Code" = '' then
             exit;
 
@@ -238,16 +276,11 @@ codeunit 50100 "AJE Table Event Listener"
         if not GetListenerTestRun() then
             exit;
 
-        AJEListenerTestRun.Update(CurrentTestMethodLine);
+        AJEListenerTestRun.UpdateTestLine(CurrentTestMethodLine);
 
         MoveDataToConfigPackageData();
 
-        CurrentTestRunNo := 0;
-        Clear(AJEListenerTestRun);
-        Clear(ConfigPackage);
-        Clear(TableTriggerSetup);
-        Clear(TableFieldsSetup);
-        Clear(TestRunData);
+        ClearData();
     end;
 
     [TryFunction]

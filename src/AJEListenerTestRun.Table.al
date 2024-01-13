@@ -127,6 +127,7 @@ table 50105 "AJE Listener Test Run"
     end;
 
     var
+        AJETableEventListener: Codeunit "AJE Table Event Listener";
         ErrorMessageWithCallStackErr: Label 'Error Message:\%1\\Error Call Stack:\%2', Locked = true;
 
     procedure GetErrorCallStack(): Text
@@ -185,7 +186,7 @@ table 50105 "AJE Listener Test Run"
         exit("No.");
     end;
 
-    procedure Update(var CurrentTestMethodLine: Record "Test Method Line")
+    procedure UpdateTestLine(var CurrentTestMethodLine: Record "Test Method Line")
     var
         TestSuiteMgt: Codeunit "Test Suite Mgt.";
     begin
@@ -199,7 +200,9 @@ table 50105 "AJE Listener Test Run"
 
     internal procedure FinishManualRun()
     begin
+        AJETableEventListener.StopTestRun(Rec);
         Status := Status::Finished;
+        AJETableEventListener.Activate(false);
     end;
 
     internal procedure ShowConfigPackage()
@@ -215,7 +218,9 @@ table 50105 "AJE Listener Test Run"
 
     internal procedure StartManualRun()
     begin
+        AJETableEventListener.Activate(true);
         Status := Status::Started;
+        AJETableEventListener.StartTestRun(Rec);
     end;
 
 
