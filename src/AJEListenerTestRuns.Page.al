@@ -42,6 +42,10 @@ page 50107 "AJE Listener Test Runs"
                 {
                     ApplicationArea = All;
                     ToolTip = 'Specifies the confiuration package code that defines tables and fields to be collected.';
+                    trigger OnDrillDown()
+                    begin
+                        Rec.ShowConfigPackage();
+                    end;
                 }
                 field(Status; Rec.Status)
                 {

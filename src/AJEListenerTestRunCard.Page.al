@@ -49,6 +49,7 @@ page 50108 "AJE Listener Test Run Card"
                     ApplicationArea = All;
                     Editable = Rec.Manual and (Rec.Status = Rec.Status::Created);
                     Enabled = not Rec."All Tables";
+                    LookupPageId = "AJE Test Result Packages";
                     ToolTip = 'Specifies the configuration package code that defines tables and fields to be stored.';
 
                     trigger OnDrillDown()
