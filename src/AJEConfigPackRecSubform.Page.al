@@ -33,6 +33,7 @@ page 50109 "AJE Config. Pack Rec. Subform"
                 {
                     ApplicationArea = All;
                     Caption = 'Temporary';
+                    Visible = false;
                 }
                 field("AJE Call Stack"; CallStack)
                 {
