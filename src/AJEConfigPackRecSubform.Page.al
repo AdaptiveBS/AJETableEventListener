@@ -5,7 +5,7 @@ page 50109 "AJE Config. Pack Rec. Subform"
     Editable = false;
     PageType = ListPart;
     SourceTable = "Config. Package Record";
-    SourceTableView = sorting("No.");
+    SourceTableView = sorting("No.") where("AJE Listener Test Run No." = filter('>0'));
 
     layout
     {
@@ -76,7 +76,6 @@ page 50109 "AJE Config. Pack Rec. Subform"
             }
         }
     }
-
 
     trigger OnAfterGetRecord()
     begin
