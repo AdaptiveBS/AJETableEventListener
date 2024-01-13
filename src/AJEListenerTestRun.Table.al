@@ -107,17 +107,20 @@ table 50105 "AJE Listener Test Run"
 
     trigger OnInsert()
     begin
-        "Start Time" := CurrentDateTime();
-        "User ID" := CopyStr(UserId(), 1, MaxStrLen("User ID"));
         if Manual then
             Status := Status::Created
-        else
+        else begin
             Status := Status::Finished;
+            "Start Time" := CurrentDateTime();
+        end;
+        "User ID" := CopyStr(UserId(), 1, MaxStrLen("User ID"));
     end;
 
     trigger OnModify()
     begin
-        if not Manual then begin
+        if Manual and (Status = Status::Started) then
+            "Start Time" := CurrentDateTime();
+        if not Manual or (Status = Status::Finished) then begin
             "Finish Time" := CurrentDateTime();
             "Execution Time" := "Finish Time" - "Start Time";
         end;
@@ -194,6 +197,11 @@ table 50105 "AJE Listener Test Run"
         Modify(true);
     end;
 
+    internal procedure FinishManualRun()
+    begin
+        Status := Status::Finished;
+    end;
+
     internal procedure ShowConfigPackage()
     var
         ConfigPackage: Record "Config. Package";
@@ -204,6 +212,12 @@ table 50105 "AJE Listener Test Run"
         ConfigPackage.SetRecFilter();
         Page.Run(Page::"AJE Test Result Pack Card", ConfigPackage);
     end;
+
+    internal procedure StartManualRun()
+    begin
+        Status := Status::Started;
+    end;
+
 
     local procedure GetCodeunitName(ID: Integer): Text[30]
     var

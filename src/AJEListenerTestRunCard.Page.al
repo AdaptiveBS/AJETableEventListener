@@ -25,7 +25,7 @@ page 50108 "AJE Listener Test Run Card"
                 field(Description; Rec.Description)
                 {
                     ApplicationArea = All;
-                    Editable = Rec.Manual;
+                    Editable = Rec.Manual and (Rec.Status = Rec.Status::Created);
                     ToolTip = 'Specifies the Description of the run.';
                 }
                 group(StatusVisibility)
@@ -41,13 +41,13 @@ page 50108 "AJE Listener Test Run Card"
                 field("All Tables"; Rec."All Tables")
                 {
                     ApplicationArea = All;
-                    Editable = Rec.Manual;
+                    Editable = Rec.Manual and (Rec.Status = Rec.Status::Created);
                     ToolTip = 'Specifies if all table events will be collected';
                 }
                 field("Config. Package Code"; Rec."Config. Package Code")
                 {
                     ApplicationArea = All;
-                    Editable = Rec.Manual;
+                    Editable = Rec.Manual and (Rec.Status = Rec.Status::Created);
                     Enabled = not Rec."All Tables";
                     ToolTip = 'Specifies the configuration package code that defines tables and fields to be stored.';
 
@@ -59,7 +59,6 @@ page 50108 "AJE Listener Test Run Card"
                 group(Time)
                 {
                     ShowCaption = false;
-                    Visible = not Rec.Manual;
                     field("Start Time"; Rec."Start Time")
                     {
                         ApplicationArea = All;
@@ -144,6 +143,46 @@ page 50108 "AJE Listener Test Run Card"
             }
         }
     }
+
+    actions
+    {
+        area(Processing)
+        {
+            action(Start)
+            {
+                ApplicationArea = All;
+                Caption = 'Start';
+                Image = Start;
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedIsBig = true;
+                PromotedOnly = true;
+                Visible = Rec.Status = Rec.Status::Created;
+                trigger OnAction()
+                begin
+                    Rec.StartManualRun();
+                    CurrPage.Update(true);
+                end;
+            }
+            action(Finish)
+            {
+                ApplicationArea = All;
+                Caption = 'Finish';
+                Image = Start;
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedIsBig = true;
+                PromotedOnly = true;
+                Visible = Rec.Status = Rec.Status::Started;
+                trigger OnAction()
+                begin
+                    Rec.FinishManualRun();
+                    CurrPage.Update(true);
+                end;
+            }
+        }
+    }
+
 
     trigger OnAfterGetRecord()
     begin
