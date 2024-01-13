@@ -4,7 +4,9 @@ page 50107 "AJE Listener Test Runs"
     ApplicationArea = All;
     Caption = 'Listener Test Runs';
     CardPageID = "AJE Listener Test Run Card";
+    DeleteAllowed = true;
     Editable = false;
+    InsertAllowed = true;
     PageType = List;
     SourceTable = "AJE Listener Test Run";
     UsageCategory = Lists;
@@ -21,21 +23,35 @@ page 50107 "AJE Listener Test Runs"
                     ApplicationArea = All;
                     ToolTip = 'Specifies an autoincremented number of the test run.';
                 }
+                field(Manual; Rec.Manual)
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies if the current run was created manually without a link to AL tests.';
+                }
                 field(Description; Rec.Description)
                 {
                     ApplicationArea = All;
                     ToolTip = 'Specifies the Description of the run.';
                 }
+                field("All Tables"; Rec."All Tables")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies if all table events will be collected';
+                }
                 field("Config. Package Code"; Rec."Config. Package Code")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the confiuration package code that defines tables and fields to be stored.';
+                    ToolTip = 'Specifies the confiuration package code that defines tables and fields to be collected.';
+                }
+                field(Status; Rec.Status)
+                {
+                    ApplicationArea = All;
+                    Tooltip = 'Specifies the status of the manual test run: created, started, or finished.';
                 }
                 field(Result; Rec.Result)
                 {
                     ApplicationArea = All;
                     BlankZero = true;
-                    Caption = 'Result';
                     Editable = false;
                     Style = Favorable;
                     StyleExpr = ResultEmphasize;

@@ -4,7 +4,6 @@ page 50108 "AJE Listener Test Run Card"
     ApplicationArea = All;
     Caption = 'Listener Test Run';
     DataCaptionExpression = Rec.Description;
-    Editable = false;
     PageType = Card;
     SourceTable = "AJE Listener Test Run";
     UsageCategory = None;
@@ -19,17 +18,37 @@ page 50108 "AJE Listener Test Run Card"
                 field("No."; Rec."No.")
                 {
                     ApplicationArea = All;
+                    Editable = false;
+                    Importance = Additional;
                     ToolTip = 'Specifies an autoincremented number of the test run.';
                 }
                 field(Description; Rec.Description)
                 {
                     ApplicationArea = All;
-                    Importance = Additional;
+                    Editable = Rec.Manual;
                     ToolTip = 'Specifies the Description of the run.';
+                }
+                group(StatusVisibility)
+                {
+                    ShowCaption = false;
+                    Visible = Rec.Manual;
+                    field(Status; Rec.Status)
+                    {
+                        ApplicationArea = All;
+                        Tooltip = 'Specifies the status of the manual test run: created, started, or finished.';
+                    }
+                }
+                field("All Tables"; Rec."All Tables")
+                {
+                    ApplicationArea = All;
+                    Editable = Rec.Manual;
+                    ToolTip = 'Specifies if all table events will be collected';
                 }
                 field("Config. Package Code"; Rec."Config. Package Code")
                 {
                     ApplicationArea = All;
+                    Editable = Rec.Manual;
+                    Enabled = not Rec."All Tables";
                     ToolTip = 'Specifies the configuration package code that defines tables and fields to be stored.';
 
                     trigger OnDrillDown()
@@ -37,35 +56,49 @@ page 50108 "AJE Listener Test Run Card"
                         Rec.ShowConfigPackage();
                     end;
                 }
-                field("Start Time"; Rec."Start Time")
+                group(Time)
                 {
-                    ApplicationArea = All;
-                    Importance = Additional;
-                    ToolTip = 'Specifies the time when the run was started.';
+                    ShowCaption = false;
+                    Visible = not Rec.Manual;
+                    field("Start Time"; Rec."Start Time")
+                    {
+                        ApplicationArea = All;
+                        Editable = false;
+                        Importance = Additional;
+                        ToolTip = 'Specifies the time when the run was started.';
+                    }
+                    field("Finish Time"; Rec."Finish Time")
+                    {
+                        ApplicationArea = All;
+                        Editable = false;
+                        Importance = Additional;
+                        ToolTip = 'Specifies the time when the run was finished.';
+                    }
+                    field("Execution Time"; Rec."Execution Time")
+                    {
+                        ApplicationArea = All;
+                        Editable = false;
+                        ToolTip = 'Specifies the execution time of the run.';
+                    }
                 }
-                field("Finish Time"; Rec."Finish Time")
+                group(ResultVisibility)
                 {
-                    ApplicationArea = All;
-                    Importance = Additional;
-                    ToolTip = 'Specifies the time when the run was finished.';
-                }
-                field("Execution Time"; Rec."Execution Time")
-                {
-                    ApplicationArea = All;
-                    ToolTip = 'Specifies the execution time of the run.';
-                }
-                field(Result; Rec.Result)
-                {
-                    ApplicationArea = All;
-                    BlankZero = true;
-                    Caption = 'Result';
-                    Editable = false;
-                    Style = Favorable;
-                    StyleExpr = ResultEmphasize;
-                    Tooltip = 'Specifies whether the test run passed, failed or were skipped.';
+                    ShowCaption = false;
+                    Visible = not Rec.Manual;
+                    field(Result; Rec.Result)
+                    {
+                        ApplicationArea = All;
+                        BlankZero = true;
+                        Caption = 'Result';
+                        Editable = false;
+                        Style = Favorable;
+                        StyleExpr = ResultEmphasize;
+                        Tooltip = 'Specifies whether the test run passed, failed or were skipped.';
+                    }
                 }
                 group(ErrorInfo)
                 {
+                    Editable = false;
                     ShowCaption = false;
                     Visible = ShowErrorControls;
                     field("Error Message"; Rec.GetFullErrorMessage())
@@ -73,7 +106,6 @@ page 50108 "AJE Listener Test Run Card"
                         ApplicationArea = All;
                         Caption = 'Error Message';
                         DrillDown = true;
-                        Editable = false;
                         Style = Unfavorable;
                         StyleExpr = true;
                         ToolTip = 'Specifies full error message with stack trace';
@@ -88,7 +120,6 @@ page 50108 "AJE Listener Test Run Card"
                         ApplicationArea = All;
                         Caption = 'Error Call Stack';
                         DrillDown = true;
-                        Editable = false;
                         ToolTip = 'Specifies the call stack that led to the error.';
 
                         trigger OnDrillDown()
@@ -100,6 +131,7 @@ page 50108 "AJE Listener Test Run Card"
                 field("User ID"; Rec."User ID")
                 {
                     ApplicationArea = All;
+                    Editable = false;
                     Importance = Additional;
                     ToolTip = 'Specifies the user who created the run.';
                 }
@@ -118,6 +150,11 @@ page 50108 "AJE Listener Test Run Card"
         ShowErrorControls := Rec.Result = Rec.Result::Failure;
         ErrorMessageWithStackTraceTxt := Rec.GetErrorMessageWithStackTrace();
         ResultEmphasize := Rec.Result = Rec.Result::Success;
+    end;
+
+    trigger OnNewRecord(BelowxRec: Boolean)
+    begin
+        Rec.Validate(Manual, true);
     end;
 
     var

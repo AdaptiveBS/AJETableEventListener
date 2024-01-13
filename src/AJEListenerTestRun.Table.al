@@ -61,11 +61,36 @@ table 50105 "AJE Listener Test Run"
         field(12; "Start Time"; DateTime)
         {
             Caption = 'Start Time';
-            Editable = false;
         }
         field(13; "Finish Time"; DateTime)
         {
             Caption = 'Finish Time';
+        }
+        field(14; Manual; Boolean)
+        {
+            Caption = 'Manual';
+
+            trigger OnValidate()
+            begin
+                if Manual then begin
+                    Description := 'Manual';
+                    "All Tables" := true;
+                end;
+            end;
+        }
+        field(15; "All Tables"; Boolean)
+        {
+            Caption = 'All Tables';
+
+            trigger OnValidate()
+            begin
+                if "All Tables" then
+                    "Config. Package Code" := '';
+            end;
+        }
+        field(16; Status; Enum "AJE Listener Test Run Status")
+        {
+            Caption = 'Status';
             Editable = false;
         }
     }
@@ -84,12 +109,18 @@ table 50105 "AJE Listener Test Run"
     begin
         "Start Time" := CurrentDateTime();
         "User ID" := CopyStr(UserId(), 1, MaxStrLen("User ID"));
+        if Manual then
+            Status := Status::Created
+        else
+            Status := Status::Finished;
     end;
 
     trigger OnModify()
     begin
-        "Finish Time" := CurrentDateTime();
-        "Execution Time" := "Finish Time" - "Start Time";
+        if not Manual then begin
+            "Finish Time" := CurrentDateTime();
+            "Execution Time" := "Finish Time" - "Start Time";
+        end;
     end;
 
     var
@@ -167,6 +198,8 @@ table 50105 "AJE Listener Test Run"
     var
         ConfigPackage: Record "Config. Package";
     begin
+        if "Config. Package Code" = '' then
+            exit;
         ConfigPackage.Get("Config. Package Code");
         ConfigPackage.SetRecFilter();
         Page.Run(Page::"AJE Test Result Pack Card", ConfigPackage);
