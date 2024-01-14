@@ -162,7 +162,6 @@ page 50108 "AJE Listener Test Run Card"
                 trigger OnAction()
                 begin
                     Rec.StartManualRun();
-                    CurrPage.Update(true);
                 end;
             }
             action(Finish)
@@ -178,7 +177,6 @@ page 50108 "AJE Listener Test Run Card"
                 trigger OnAction()
                 begin
                     Rec.FinishManualRun();
-                    CurrPage.Update(true);
                 end;
             }
         }
