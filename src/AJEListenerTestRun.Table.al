@@ -201,8 +201,7 @@ table 50105 "AJE Listener Test Run"
     internal procedure FinishManualRun()
     begin
         AJETableEventListener.StopTestRun(Rec);
-        Status := Status::Finished;
-        Modify(true);
+        UpdateStatus(Status::Finished);
         AJETableEventListener.Activate(false);
     end;
 
@@ -220,9 +219,8 @@ table 50105 "AJE Listener Test Run"
     internal procedure StartManualRun()
     begin
         AJETableEventListener.Activate(true);
-        Status := Status::Started;
         "Config. Package Code" := AJETableEventListener.StartTestRun(Rec);
-        Modify(true);
+        UpdateStatus(Status::Started);
     end;
 
     local procedure GetCodeunitName(ID: Integer): Text[30]
@@ -250,6 +248,14 @@ table 50105 "AJE Listener Test Run"
         "Error Message".CreateOutStream(ErrorMessageOutStream, TextEncoding::UTF16);
         ErrorMessageOutStream.WriteText(ErrorMessage);
         Modify(true);
+    end;
+
+    local procedure UpdateStatus(NewStatus: Enum "AJE Listener Test Run Status")
+    begin
+        Status := NewStatus;
+        AJETableEventListener.SkipCollectingData(true);
+        Modify(true);
+        AJETableEventListener.SkipCollectingData(false);
     end;
 
 }
