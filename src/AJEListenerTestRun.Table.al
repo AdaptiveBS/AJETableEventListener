@@ -202,6 +202,7 @@ table 50105 "AJE Listener Test Run"
     begin
         AJETableEventListener.StopTestRun(Rec);
         Status := Status::Finished;
+        Modify(true);
         AJETableEventListener.Activate(false);
     end;
 
@@ -220,9 +221,9 @@ table 50105 "AJE Listener Test Run"
     begin
         AJETableEventListener.Activate(true);
         Status := Status::Started;
-        AJETableEventListener.StartTestRun(Rec);
+        "Config. Package Code" := AJETableEventListener.StartTestRun(Rec);
+        Modify(true);
     end;
-
 
     local procedure GetCodeunitName(ID: Integer): Text[30]
     var
