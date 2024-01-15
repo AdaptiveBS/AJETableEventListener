@@ -1,0 +1,57 @@
+{
+    "id":  "9d39a02b-b97a-4543-9626-e438bf824788",
+    "name":  "Table Event Listener - Tests",
+    "publisher":  "Adaptive Business Solutions Inc",
+    "version":  "1.0.0.0",
+    "brief":  "AL Tests for Table Event Listener",
+    "description":  "AL Tests for Table Event Listener",
+    "privacyStatement":  "https://justjewelrysoftware.com/contactus",
+    "EULA":  "https://justjewelrysoftware.com/contactus",
+    "help":  "https://justjewelrysoftware.com/contactus",
+    "url":  "https://justjewelrysoftware.com/contactus",
+    "contextSensitiveHelpUrl":  "https://justjewelrysoftware.com/contactus",
+    "logo": "Resources/App.png",
+    "dependencies":  [
+                        {
+                            "id": "09721c13-88b9-4b41-bb44-745859132996",
+                            "name": "Table Event Listener",
+                            "publisher": "Adaptive Business Solutions Inc",
+                            "version": "1.0.0.0"
+                        },
+                        {
+                            "id":  "9856ae4f-d1a7-46ef-89bb-6ef056398228",
+                            "name":  "System Application Test Library",
+                            "publisher":  "Microsoft",
+                            "version":  "23.0.0.0"
+                        },
+                        {
+                            "id":  "5d86850b-0d76-4eca-bd7b-951ad998e997",
+                            "name":  "Tests-TestLibraries",
+                            "publisher":  "Microsoft",
+                            "version":  "23.0.0.0"
+                        }
+                    ],
+
+    "platform":  "23.0.0.0",
+    "application":  "23.0.0.0",
+    "idRanges":  [
+                    {
+                        "from":  50100,
+                        "to":  50110
+                    }
+                ],
+    "resourceExposurePolicy":  {
+                                    "allowDebugging":  true,
+                                    "allowDownloadingSource":  true,
+                                    "includeSourceInSymbolFile":  true
+                                },
+    "features": [
+        "TranslationFile"
+      ],
+    "runtime":  "12.0",
+    "suppressWarnings": [
+        "AA0218",
+        "AS0084"
+    ],
+    "applicationInsightsConnectionString": "InstrumentationKey=685359a3-9879-48ea-a61a-689a0546eafd;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"            
+}

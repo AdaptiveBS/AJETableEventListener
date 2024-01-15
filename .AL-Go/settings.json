@@ -5,12 +5,11 @@
     "AJE"
   ],
   "appFolders": [
-    "App"
+    "app"
   ],
-  "installTestRunner": true,
-  "installTestFramework": true,
-  "installTestLibraries": true,
-  "testFolders": [],
+  "testFolders": [
+    "test"
+  ],
   "bcptTestFolders": [],
   "al.packageCachePath": "../App/.alpackages",
   "al.ruleSetPath": "../App/.codeAnalysis/app.ruleset.json",
