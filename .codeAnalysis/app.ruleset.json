@@ -13,6 +13,11 @@
             "justification":"Ignore TextConst and Label variable must have a suffix from this list: Msg, Tok, Err, Qst, Lbl, TxtMsg, Tok, Err, Qst, Lbl, Txt"
         },    
         {
+            "id": "AS0016",
+            "action": "None",
+            "justification":"Field with name must use the DataClassification property and its value should be different from ToBeClassified"
+        },
+        {
             "id": "AL1025",
             "action": "Error",
             "justification":"Break on not matching PermissionSet definitions"
