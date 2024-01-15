@@ -126,6 +126,14 @@ table 50105 "AJE Listener Test Run"
         end;
     end;
 
+    trigger OnDelete()
+    var
+        ConfigPackageRecord: Record "Config. Package Record";
+    begin
+        ConfigPackageRecord.SetRange("AJE Listener Test Run No.", "No.");
+        ConfigPackageRecord.DeleteAll(true);
+    end;
+
     var
         AJETableEventListener: Codeunit "AJE Table Event Listener";
         ErrorMessageWithCallStackErr: Label 'Error Message:\%1\\Error Call Stack:\%2', Locked = true;
