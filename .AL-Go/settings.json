@@ -1,0 +1,21 @@
+{
+  "country": "us",
+  "artifact": "https://bcartifacts.azureedge.net/sandbox/23.2.14098.14755/us",
+  "AppSourceCopMandatoryAffixes": [
+    "AJE"
+  ],
+  "appFolders": [
+    "App"
+  ],
+  "testFolders": [],
+  "bcptTestFolders": [],
+  "al.packageCachePath": "../App/.alpackages",
+  "al.ruleSetPath": "../App/.codeAnalysis/app.ruleset.json",
+  "al.codeAnalyzers": [
+    "${CodeCop}",
+    "${UICop}",
+    "${AppSourceCop}"
+  ],
+  "al.enableCodeAnalysis": true,
+  "PartnerTelemetryConnectionString": "InstrumentationKey=7f2e397b-f20c-4698-9cee-124587f18a25;IngestionEndpoint=https://eastus2-3.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus2.livediagnostics.monitor.azure.com/"
+}
