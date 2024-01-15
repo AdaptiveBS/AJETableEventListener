@@ -8,6 +8,8 @@
     "App"
   ],
   "installTestRunner": true,
+  "installTestFramework": true,
+  "installTestLibraries": true,
   "testFolders": [],
   "bcptTestFolders": [],
   "al.packageCachePath": "../App/.alpackages",
