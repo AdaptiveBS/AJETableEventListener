@@ -1,0 +1,45 @@
+{
+	"folders": [
+		{
+			"path": "app"
+		},
+		{
+			"path": "test"
+		}
+	],
+	"settings": {
+		"al.codeAnalyzers": [
+			"${CodeCop}",
+			"${UICop}",
+			"${AppSourceCop}"
+		],
+		"al.enableCodeAnalysis": true,
+		"al.enableCodeActions": true,
+		"CRS.OnSaveAlFileAction": "Rename",
+		"CRS.FileNamePattern": "<ObjectNameShort>.<ObjectTypeShortPascalCase>.al",
+		"CRS.FileNamePatternExtensions": "<ObjectNameShort>.<ObjectTypeShortPascalCase>.al",
+		"CRS.FileNamePatternPageCustomizations": "<ObjectNameShort>.<ObjectTypeShortPascalCase>.al",
+		"editor.formatOnSave": true,
+		"editor.codeActionsOnSave": {
+			"source.fixAll.al": "explicit"
+		},
+		"alOutline.addDataItemToReportColumnName": true,
+		"alOutline.autoGenerateFiles": true,
+		"alOutline.codeActionsOnSave": [
+			"SortTableFields",
+			"SortReportColumns",
+			"SortProperties",
+			"SortProcedures",
+			"SortVariables",
+			"SortPermissions",
+			"SortPermissionSetList"
+		],
+		"alOutline.fixCodeCopMissingParenthesesOnSave": true,
+		"alOutline.lockRemovedFieldsCaptions": true,
+		"alOutline.openDefinitionInNewTab": true,
+		"workbench.editor.empty.hint": "hidden",
+		"CRS.DisableDefaultAlSnippets": true,
+		"al-xml-doc.CheckObjectDocumentationInformationLevel": "Warning",
+		"al-xml-doc.DocumentationExportSchema": "Project File + Object File + Procedure File"
+	}
+}
