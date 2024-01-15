@@ -18,6 +18,16 @@ tableextension 50101 AJETestLinePackCode extends "Test Method Line"
             Caption = 'Latest Test Run No.';
             TableRelation = "AJE Listener Test Run";
         }
+        field(50102; "AJE All Tables"; Boolean)
+        {
+            Caption = 'All Tables';
+
+            trigger OnValidate()
+            begin
+                if "AJE All Tables" then
+                    "AJE Config. Pack Code" := '';
+            end;
+        }
     }
 
     procedure AJEShowTestResults()

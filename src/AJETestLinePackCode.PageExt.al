@@ -19,9 +19,16 @@ pageextension 50101 AJETestLinePackCode extends "AL Test Tool"
         }
         addafter(Run)
         {
+            field("AJE All Tables"; Rec."AJE All Tables")
+            {
+                ApplicationArea = All;
+                ToolTip = 'Specifies if all table events will be collected';
+                Visible = CollectResult;
+            }
             field("AJE Config. Pack Code"; Rec."AJE Config. Pack Code")
             {
                 ApplicationArea = All;
+                Editable = not Rec."AJE All Tables";
                 LookupPageId = "AJE Test Result Packages";
                 ToolTip = 'Specifies the configuration package that defines tables and fields which data will be stored as test run results.';
                 Visible = CollectResult;

@@ -185,6 +185,7 @@ table 50105 "AJE Listener Test Run"
     begin
         Init();
         "No." := 0; // autoincrement
+        "All Tables" := TestMethodLine."AJE All Tables";
         Validate("Config. Package Code", TestMethodLine."AJE Config. Pack Code");
         Validate("Codeunit ID", TestMethodLine."Test Codeunit");
         "Function Name" := TestMethodLine.Function;
