@@ -83,6 +83,16 @@ tableextension 50104 AJEConfigPackRecordRunNo extends "Config. Package Record"
             Message(CallStack);
     end;
 
+    internal procedure IsDataExist(): Boolean
+    var
+        ConfigPackageData: Record "Config. Package Data";
+    begin
+        ConfigPackageData.SetRange("Package Code", "Package Code");
+        ConfigPackageData.SetRange("Table ID", "Table ID");
+        ConfigPackageData.SetRange("No.", "No.");
+        exit(not ConfigPackageData.IsEmpty());
+    end;
+
     internal procedure ShowRecords()
     var
         ConfigPackageRecord: Record "Config. Package Record";

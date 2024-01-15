@@ -69,6 +69,7 @@ page 50109 "AJE Config. Pack Rec. Subform"
                 Caption = 'Show Data';
                 Image = Grid;
                 ToolTip = 'View all stored records of the current table.';
+                Visible = ShowDataVisible;
 
                 trigger OnAction()
                 begin
@@ -82,9 +83,11 @@ page 50109 "AJE Config. Pack Rec. Subform"
     begin
         CallStack := Rec.AJEGetCallStack();
         RecordIDText := Format(Rec."AJE Record ID");
+        ShowDataVisible := Rec.IsDataExist();
     end;
 
     var
+        ShowDataVisible: Boolean;
         CallStack: Text;
         RecordIDText: Text;
 }
