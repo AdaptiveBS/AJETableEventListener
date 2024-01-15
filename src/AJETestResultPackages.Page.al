@@ -1,9 +1,9 @@
-page 50105 "AJE Test Result Packages"
+page 50103 "AJE Test Result Packages"
 {
     AdditionalSearchTerms = 'test result setup packages';
     ApplicationArea = All;
     Caption = 'Test Result Packages';
-    CardPageID = "AJE Test Result Pack Card";
+    CardPageID = "AJE Test Result Package Card";
     Editable = false;
     PageType = List;
     SourceTable = "Config. Package";

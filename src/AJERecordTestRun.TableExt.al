@@ -1,4 +1,4 @@
-tableextension 50104 AJEConfigPackRecordRunNo extends "Config. Package Record"
+tableextension 50102 AJERecordTestRun extends "Config. Package Record"
 {
     fields
     {

@@ -14,7 +14,7 @@ permissionset 50100 AJETableEvtListener
         page "AJE Config. Pack Rec. Subform" = X,
         page "AJE Listener Test Run Card" = X,
         page "AJE Listener Test Runs" = X,
+        page "AJE Test Result Package Card" = X,
         page "AJE Test Result Packages" = X,
-        page "AJE Test Result Pack Card" = X,
         page "AJE Test Result Pack Subform" = X;
 }

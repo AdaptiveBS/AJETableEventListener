@@ -1,4 +1,4 @@
-tableextension 50101 AJETestLinePackCode extends "Test Method Line"
+tableextension 50103 AJETestMethodLineTestRun extends "Test Method Line"
 {
     fields
     {

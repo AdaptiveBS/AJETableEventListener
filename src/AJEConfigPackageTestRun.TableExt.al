@@ -1,4 +1,4 @@
-tableextension 50103 AJEConfigPackageFlag extends "Config. Package"
+tableextension 50100 AJEConfigPackageTestRun extends "Config. Package"
 {
     fields
     {

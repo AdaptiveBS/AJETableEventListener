@@ -1,4 +1,4 @@
-tableextension 50100 AJEConfigPackTableRIMD extends "Config. Package Table"
+tableextension 50101 AJETableTriggerSetup extends "Config. Package Table"
 {
     fields
     {

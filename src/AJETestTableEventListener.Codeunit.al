@@ -5,12 +5,18 @@ codeunit 50101 "AJE Test Table Event Listener"
 
     [Test]
     procedure TestFailure()
+    var
+        GLEntry: Record "G/L Entry";
     begin
-        Error('this is a strange error');
+        GLEntry."Entry No." := -1;
+        GLEntry."G/L Account No." := 'GLAcc0001';
+        GLEntry.Insert();
+
+        Error('this is an error');
     end;
 
     [Test]
-    procedure TestRIMD()
+    procedure TestTriggerSetup()
     var
         CustLedgerEntry: Record "Cust. Ledger Entry";
         DetailedCustLedgEntry: Record "Detailed Cust. Ledg. Entry";

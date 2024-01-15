@@ -1,4 +1,4 @@
-table 50105 "AJE Listener Test Run"
+table 50100 "AJE Listener Test Run"
 {
     fields
     {
@@ -222,7 +222,7 @@ table 50105 "AJE Listener Test Run"
             exit;
         ConfigPackage.Get("Config. Package Code");
         ConfigPackage.SetRecFilter();
-        Page.Run(Page::"AJE Test Result Pack Card", ConfigPackage);
+        Page.Run(Page::"AJE Test Result Package Card", ConfigPackage);
     end;
 
     internal procedure StartManualRun()

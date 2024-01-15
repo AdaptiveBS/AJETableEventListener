@@ -1,4 +1,4 @@
-page 50104 "AJE Test Result Pack Card"
+page 50104 "AJE Test Result Package Card"
 {
     Caption = 'Test Result Package Card';
     PageType = Document;
