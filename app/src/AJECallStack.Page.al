@@ -38,6 +38,13 @@ page 50107 "AJE Call Stack"
                     {
                         ApplicationArea = All;
                     }
+                    field("CC Line No."; Rec."CC Line No.")
+                    {
+                        ApplicationArea = All;
+                        Style = Unfavorable;
+                        StyleExpr = UnfavorableCCLineStyle;
+                        Visible = CodeCoverageExists;
+                    }
                     field("Line No."; Rec."Line No.")
                     {
                         ApplicationArea = All;
@@ -106,12 +113,6 @@ page 50107 "AJE Call Stack"
         }
     }
 
-    trigger OnOpenPage()
-    begin
-        CodeCoverage.Reset();
-        CodeCoverageExists := not CodeCoverage.IsEmpty();
-    end;
-
     trigger OnAfterGetCurrRecord()
     begin
         if (CurrObject."Object ID" <> Rec."Object ID") or (CurrObject."Object Type" <> Rec."Object Type") then
@@ -125,15 +126,23 @@ page 50107 "AJE Call Stack"
             end;
     end;
 
+    trigger OnAfterGetRecord()
+    begin
+        UnfavorableCCLineStyle := Rec."CC Line No." = 0;
+    end;
+
     var
         CurrObject: Record AllObj;
         CodeCoverage: Record "Code Coverage";
         CodeCoverageMgt: Codeunit "Code Coverage Mgt.";
         CodeCoverageExists: Boolean;
+        UnfavorableCCLineStyle: Boolean;
 
 
     procedure Set(CallStack: Text)
     begin
-        Rec.Initialize(CallStack);
+        CodeCoverage.Reset();
+        CodeCoverageExists := not CodeCoverage.IsEmpty();
+        Rec.Initialize(CallStack, CodeCoverageExists);
     end;
 }

@@ -42,6 +42,10 @@ table 50107 "AJE Call Stack Line"
         {
             Caption = 'Is Test Framework';
         }
+        field(10; "CC Line No."; Integer)
+        {
+            Caption = 'CC Line No.';
+        }
     }
 
     keys
@@ -52,17 +56,19 @@ table 50107 "AJE Call Stack Line"
         }
     }
 
-    procedure Add(CallStackLine: text)
+    var
+        Regex: Codeunit Regex;
+        FunctionLineNumbers: Dictionary of [Text, Dictionary of [Text, Integer]]; // ['Table_36', [('OnRun',5),('OnValidate',24)]]
+
+    procedure Add(CallStackLine: text; CodeCoverageExists: Boolean)
     var
         Groups: Record Groups;
         Matches: Record Matches;
-        Regex: Codeunit Regex;
         CallStackLineLbl: Label '^(.*)\((.*) (\d*)\)\.(.*) line (\d*) - (.*) by (.*)$', Locked = true;
         Value: Text;
     begin
         if FindLast() then;
-        Regex.Regex(CallStackLineLbl);
-        Regex.Match(CallStackLine, Matches);
+        Regex.Match(CallStackLine, CallStackLineLbl, Matches);
         if Matches.FindFirst() then begin
             Regex.Groups(Matches, Groups);
             if Groups.FindSet() then begin
@@ -88,19 +94,73 @@ table 50107 "AJE Call Stack Line"
                     end;
                 until Groups.Next() = 0;
                 "Is Test Framework" := "Object ID" in [130450 .. 130480];
+                if CodeCoverageExists then
+                    CalcCodeCoverageLineNo();
                 Insert();
             end;
         end;
     end;
 
-    procedure Initialize(CallStack: Text)
+    procedure Initialize(CallStack: Text; CodeCoverageExists: Boolean)
     var
-        Regex: Codeunit Regex;
         Lines: List of [Text];
         Line: Text;
     begin
         Regex.Split(CallStack, '\\', Lines);
         foreach Line in Lines do
-            Add(Line);
+            Add(Line, CodeCoverageExists);
+    end;
+
+    local procedure CalcCodeCoverageLineNo()
+    var
+        LineNumbers: Dictionary of [Text, Integer];
+        ObjectKeyLbl: Label '%1_%2', Locked = true;
+        FunctionName: Text;
+        ObjectKey: Text;
+    begin
+        ObjectKey := StrSubstNo(ObjectKeyLbl, "Object Type", "Object Id");
+        if not FunctionLineNumbers.ContainsKey(ObjectKey) then
+            CollectFunctionLineNumbers(ObjectKey);
+
+        LineNumbers := FunctionLineNumbers.Get(ObjectKey);
+
+        FunctionName := Method;
+        if FunctionName.Contains('(') then
+            FunctionName := FunctionName.Split('(').Get(1);
+        if LineNumbers.ContainsKey(FunctionName) then
+            "CC Line No." := LineNumbers.Get(FunctionName) + "Line No.";
+    end;
+
+    local procedure CollectFunctionLineNumbers(ObjectKey: Text)
+    var
+        CodeCoverage: Record "Code Coverage";
+        LineNumbers: Dictionary of [Text, Integer];
+        FunctionName: Text;
+    begin
+        CodeCoverage.SetRange("Object Type", "Object Type");
+        CodeCoverage.SetRange("Object Id", "Object Id");
+        CodeCoverage.SetRange("Line Type", CodeCoverage."Line Type"::"Trigger/Function");
+        if CodeCoverage.FindSet() then
+            repeat
+                FunctionName := GetFunctionName(CodeCoverage.Line);
+                if not LineNumbers.ContainsKey(FunctionName) then
+                    LineNumbers.Add(FunctionName, CodeCoverage."Line No.");
+            until CodeCoverage.Next() = 0;
+
+        FunctionLineNumbers.Add(ObjectKey, LineNumbers);
+    end;
+
+    local procedure GetFunctionName(Line: Text[250]) Name: Text
+    var
+        Groups: Record Groups;
+        Matches: Record Matches;
+        FunctionNameLbl: Label '\s([^\s-]*)\(', Locked = true;
+    begin
+        Regex.Match(Line, FunctionNameLbl, Matches);
+        if Matches.FindFirst() then begin
+            Regex.Groups(Matches, Groups);
+            if Groups.Get(1) then
+                Name := Groups.ReadValue();
+        end;
     end;
 }
