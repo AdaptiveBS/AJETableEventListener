@@ -41,8 +41,11 @@ page 50102 "AJE Config. Pack Rec. Subform"
                     Caption = 'Call Stack';
                     Editable = false;
                     trigger OnDrillDown()
+                    var
+                        AJECallStack: Page "AJE Call Stack";
                     begin
-                        Rec.AJEShowCallStack();
+                        AJECallStack.Set(Rec.AJEGetCallStack());
+                        AJECallStack.Run();
                     end;
                 }
                 field("AJE Created DateTime"; Rec."AJE Created DateTime")
