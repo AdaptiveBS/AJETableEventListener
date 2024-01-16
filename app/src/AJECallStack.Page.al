@@ -12,46 +12,52 @@ page 50107 "AJE Call Stack"
     {
         area(Content)
         {
-            repeater(Group)
+            group(General)
             {
-                field("Entry No."; Rec."Entry No.")
+                ShowCaption = false;
+                repeater(Group)
                 {
-                    ApplicationArea = All;
-                    Visible = false;
+                    field("Entry No."; Rec."Entry No.")
+                    {
+                        ApplicationArea = All;
+                        Visible = false;
+                    }
+                    field("Object Type"; Rec."Object Type")
+                    {
+                        ApplicationArea = All;
+                    }
+                    field("Object ID"; Rec."Object ID")
+                    {
+                        ApplicationArea = All;
+                    }
+                    field("Object Name"; Rec."Object Name")
+                    {
+                        ApplicationArea = All;
+                    }
+                    field(Method; Rec.Method)
+                    {
+                        ApplicationArea = All;
+                    }
+                    field("Line No."; Rec."Line No.")
+                    {
+                        ApplicationArea = All;
+                    }
+                    field("App Name"; Rec."App Name")
+                    {
+                        ApplicationArea = All;
+                    }
+                    field(Publisher; Rec.Publisher)
+                    {
+                        ApplicationArea = All;
+                    }
                 }
-                field("Object Type"; Rec."Object Type")
+                part(CodeCoverage; "AJE Code Coverage Subform")
                 {
-                    ApplicationArea = All;
-                }
-                field("Object ID"; Rec."Object ID")
-                {
-                    ApplicationArea = All;
-                }
-                field("Object Name"; Rec."Object Name")
-                {
-                    ApplicationArea = All;
-                }
-                field(Method; Rec.Method)
-                {
-                    ApplicationArea = All;
-                }
-                field("Line No."; Rec."Line No.")
-                {
-                    ApplicationArea = All;
-                }
-                field("App Name"; Rec."App Name")
-                {
-                    ApplicationArea = All;
-                }
-                field(Publisher; Rec.Publisher)
-                {
-                    ApplicationArea = All;
+                    Caption = 'Code';
+                    SubPageLink = "Object Type" = field("Object Type"), "Object ID" = field("Object ID");
+                    Visible = CodeCoverageExists;
                 }
             }
-        }
-        area(Factboxes)
-        {
-
         }
     }
 
@@ -100,8 +106,31 @@ page 50107 "AJE Call Stack"
         }
     }
 
+    trigger OnOpenPage()
+    begin
+        CodeCoverage.Reset();
+        CodeCoverageExists := not CodeCoverage.IsEmpty();
+    end;
+
+    trigger OnAfterGetCurrRecord()
+    begin
+        if (CurrObject."Object ID" <> Rec."Object ID") or (CurrObject."Object Type" <> Rec."Object Type") then
+            if CurrObject.Get(Rec."Object Type", Rec."Object ID") then begin
+                CurrObject.SetRecFilter();
+                //CodeCoverageMgt.Start(false);
+                //CodeCoverageMgt.Include(CurrObject);
+                //CodeCoverageMgt.Stop();
+                CodeCoverage.SetRange("Object Type", Rec."Object Type");
+                CodeCoverage.SetRange("Object ID", Rec."Object ID");
+            end;
+    end;
+
     var
+        CurrObject: Record AllObj;
         CodeCoverage: Record "Code Coverage";
+        CodeCoverageMgt: Codeunit "Code Coverage Mgt.";
+        CodeCoverageExists: Boolean;
+
 
     procedure Set(CallStack: Text)
     begin
