@@ -154,10 +154,6 @@ page 50101 "AJE Listener Test Run Card"
                 ApplicationArea = All;
                 Caption = 'Start';
                 Image = Start;
-                Promoted = true;
-                PromotedCategory = Process;
-                PromotedIsBig = true;
-                PromotedOnly = true;
                 Visible = Rec.Status = Rec.Status::Created;
                 trigger OnAction()
                 begin
@@ -168,11 +164,7 @@ page 50101 "AJE Listener Test Run Card"
             {
                 ApplicationArea = All;
                 Caption = 'Finish';
-                Image = Start;
-                Promoted = true;
-                PromotedCategory = Process;
-                PromotedIsBig = true;
-                PromotedOnly = true;
+                Image = Stop;
                 Visible = Rec.Status = Rec.Status::Started;
                 trigger OnAction()
                 begin
@@ -180,8 +172,16 @@ page 50101 "AJE Listener Test Run Card"
                 end;
             }
         }
+        area(Promoted)
+        {
+            actionref(Start_Promoted; Start)
+            {
+            }
+            actionref(Finish_Promoted; Finish)
+            {
+            }
+        }
     }
-
 
     trigger OnAfterGetRecord()
     begin
