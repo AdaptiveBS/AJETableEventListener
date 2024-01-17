@@ -134,7 +134,8 @@ tableextension 50102 AJERecordTestRun extends "Config. Package Record"
     begin
         Fields.Add(-1);
         FieldCaptions.Add('Event Type');
-        //Fields.Add(0);
+        Fields.Add(0);
+        FieldCaptions.Add('Call Stack');
         //FieldCaptions.Add('Temporary');
 
         FilterDataForRecord(ConfigPackageData);

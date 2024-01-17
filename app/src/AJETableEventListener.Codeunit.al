@@ -65,10 +65,10 @@ codeunit 50100 "AJE Table Event Listener"
         FieldData: Dictionary of [Integer, Text];
         FieldId: Integer;
     begin
-        FieldData.Add(-3, CallStack);
+        // FieldData.Add(-3, Format(RecRef.IsTemporary())); // Rec is never Temporary 
         FieldData.Add(-2, Format(RecRef.RecordId()));
         FieldData.Add(-1, Format(EventType.AsInteger()));
-        // FieldData.Add(0, Format(RecRef.IsTemporary())); // Rec is never Temporary 
+        FieldData.Add(0, CallStack);
 
         if Fields.ContainsKey(true) then begin
             foreach FieldId in Fields.Get(true) do
@@ -241,10 +241,10 @@ codeunit 50100 "AJE Table Event Listener"
         ConfigPackageRecord."Table ID" := TableId;
         ConfigPackageRecord."No." := RecNo;
         ConfigPackageRecord."AJE Listener Test Run No." := AJEListenerTestRun."No.";
-        // Evaluate(ConfigPackageRecord."AJE Temporary", FieldData.Get(0));
+        ConfigPackageRecord.AJESetCallStack(FieldData.Get(0));
         Evaluate(ConfigPackageRecord."AJE Event Type", FieldData.Get(-1), 9);
         Evaluate(ConfigPackageRecord."AJE Record ID", FieldData.Get(-2));
-        ConfigPackageRecord.AJESetCallStack(FieldData.Get(-3));
+        // Evaluate(ConfigPackageRecord."AJE Temporary", FieldData.Get(-3));
         ConfigPackageRecord.Insert(true);
     end;
 
