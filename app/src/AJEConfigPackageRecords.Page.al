@@ -19,12 +19,20 @@ page 50106 "AJE Config. Package Records"
                     ApplicationArea = All;
                     CaptionClass = '3,' + GetMatrixColumnCaptions(1);
                     Visible = Field1Visible;
+
                 }
                 field(Field2; GetMatrixCellData(2))
                 {
                     ApplicationArea = All;
                     CaptionClass = '3,' + GetMatrixColumnCaptions(2);
                     Visible = Field2Visible;
+                    trigger OnDrillDown()
+                    var
+                        AJECallStack: Page "AJE Call Stack";
+                    begin
+                        AJECallStack.Set(Rec.AJEGetCallStack());
+                        AJECallStack.Run();
+                    end;
                 }
                 field(Field3; GetMatrixCellData(3))
                 {
@@ -626,16 +634,19 @@ page 50106 "AJE Config. Package Records"
         FormCaption := Format(Rec."AJE Record ID");
         Clear(MatrixCellData);
         foreach FieldId in Fields do
-            if ConfigPackageData.Get(Rec."Package Code", Rec."Table ID", Rec."No.", FieldId) then
-                case FieldId of
-                    -1: // Event Type
-                        begin
-                            Evaluate(EventType, ConfigPackageData.Value);
-                            MatrixCellData.Add(Format(EventType));
-                        end;
-                    else
-                        MatrixCellData.Add(ConfigPackageData.Value);
-                end;
+            if FieldId = 0 then
+                MatrixCellData.Add(Rec.AJEGetCallStack())
+            else
+                if ConfigPackageData.Get(Rec."Package Code", Rec."Table ID", Rec."No.", FieldId) then
+                    case FieldId of
+                        -1: // Event Type
+                            begin
+                                Evaluate(EventType, ConfigPackageData.Value);
+                                MatrixCellData.Add(Format(EventType));
+                            end;
+                        else
+                            MatrixCellData.Add(ConfigPackageData.Value);
+                    end;
     end;
 
     trigger OnClosePage()
