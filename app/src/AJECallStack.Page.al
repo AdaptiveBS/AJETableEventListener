@@ -115,15 +115,11 @@ page 50107 "AJE Call Stack"
 
     trigger OnAfterGetCurrRecord()
     begin
-        if (CurrObject."Object ID" <> Rec."Object ID") or (CurrObject."Object Type" <> Rec."Object Type") then
-            if CurrObject.Get(Rec."Object Type", Rec."Object ID") then begin
-                CurrObject.SetRecFilter();
-                //CodeCoverageMgt.Start(false);
-                //CodeCoverageMgt.Include(CurrObject);
-                //CodeCoverageMgt.Stop();
-                CodeCoverage.SetRange("Object Type", Rec."Object Type");
-                CodeCoverage.SetRange("Object ID", Rec."Object ID");
-            end;
+        if Rec."CC Line No." <> 0 then begin
+            if CodeCoverage.Get(Rec."Object Type", Rec."Object ID", Rec."CC Line No.") then;
+            CurrPage.CodeCoverage.Page.SetLineNo(Rec."CC Line No.");
+            CurrPage.CodeCoverage.Page.SetRecord(CodeCoverage);
+        end;
     end;
 
     trigger OnAfterGetRecord()
@@ -132,9 +128,7 @@ page 50107 "AJE Call Stack"
     end;
 
     var
-        CurrObject: Record AllObj;
         CodeCoverage: Record "Code Coverage";
-        CodeCoverageMgt: Codeunit "Code Coverage Mgt.";
         CodeCoverageExists: Boolean;
         UnfavorableCCLineStyle: Boolean;
 

@@ -21,7 +21,8 @@ page 50108 "AJE Code Coverage Subform"
                 field("Line No."; Rec."Line No.")
                 {
                     ApplicationArea = All;
-                    Width = 4;
+                    Style = Favorable;
+                    StyleExpr = IsCurrLine;
                 }
             }
         }
@@ -30,10 +31,18 @@ page 50108 "AJE Code Coverage Subform"
     trigger OnAfterGetRecord()
     begin
         SetStyle();
+        IsCurrLine := CurrLineNo = Rec."Line No.";
     end;
 
     var
+        IsCurrLine: Boolean;
+        CurrLineNo: Integer;
         LineStyle: Text;
+
+    procedure SetLineNo(LineNo: Integer)
+    begin
+        CurrLineNo := LineNo;
+    end;
 
     local procedure SetStyle()
     begin
