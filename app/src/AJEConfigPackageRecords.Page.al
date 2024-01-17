@@ -19,12 +19,20 @@ page 50106 "AJE Config. Package Records"
                     ApplicationArea = All;
                     CaptionClass = '3,' + GetMatrixColumnCaptions(1);
                     Visible = Field1Visible;
+
                 }
                 field(Field2; GetMatrixCellData(2))
                 {
                     ApplicationArea = All;
                     CaptionClass = '3,' + GetMatrixColumnCaptions(2);
                     Visible = Field2Visible;
+                    trigger OnDrillDown()
+                    var
+                        AJECallStack: Page "AJE Call Stack";
+                    begin
+                        AJECallStack.Set(Rec.AJEGetCallStack());
+                        AJECallStack.Run();
+                    end;
                 }
                 field(Field3; GetMatrixCellData(3))
                 {
