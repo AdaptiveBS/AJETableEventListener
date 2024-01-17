@@ -95,7 +95,7 @@ page 50107 "AJE Call Stack"
                 begin
                     Rec.FilterGroup(2);
                     Rec.SetRange("Is Test Framework", false);
-                    Rec.FilterGroup(1);
+                    Rec.FilterGroup(0);
                 end;
             }
         }
@@ -115,11 +115,7 @@ page 50107 "AJE Call Stack"
 
     trigger OnAfterGetCurrRecord()
     begin
-        if Rec."CC Line No." <> 0 then begin
-            if CodeCoverage.Get(Rec."Object Type", Rec."Object ID", Rec."CC Line No.") then;
-            CurrPage.CodeCoverage.Page.SetLineNo(Rec."CC Line No.");
-            CurrPage.CodeCoverage.Page.SetRecord(CodeCoverage);
-        end;
+        SetCodeCoverageRecord();
     end;
 
     trigger OnAfterGetRecord()
@@ -138,5 +134,13 @@ page 50107 "AJE Call Stack"
         CodeCoverage.Reset();
         CodeCoverageExists := not CodeCoverage.IsEmpty();
         Rec.Initialize(CallStack, CodeCoverageExists);
+    end;
+
+    local procedure SetCodeCoverageRecord()
+    begin
+        CurrPage.CodeCoverage.Page.SetLine(Rec);
+        if CodeCoverage.Get(Rec."Object Type", Rec."Object ID", Rec."CC Line No.") then
+            CurrPage.CodeCoverage.Page.SetRecord(CodeCoverage);
+        CurrPage.CodeCoverage.Page.Update(false);
     end;
 }

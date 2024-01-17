@@ -21,12 +21,33 @@ page 50108 "AJE Code Coverage Subform"
                 field("Line No."; Rec."Line No.")
                 {
                     ApplicationArea = All;
-                    Style = Favorable;
+                    Style = StrongAccent;
                     StyleExpr = IsCurrLine;
                 }
             }
         }
     }
+
+    actions
+    {
+        area(Processing)
+        {
+            action(GoToLine)
+            {
+                ApplicationArea = All;
+                Caption = 'Go To Line';
+                Image = GoTo;
+
+                trigger OnAction()
+                begin
+                    GoToCurrLineNo();
+                    CurrPage.Update(false);
+                end;
+            }
+
+        }
+    }
+
 
     trigger OnAfterGetRecord()
     begin
@@ -39,9 +60,18 @@ page 50108 "AJE Code Coverage Subform"
         CurrLineNo: Integer;
         LineStyle: Text;
 
-    procedure SetLineNo(LineNo: Integer)
+    procedure GoToCurrLineNo()
     begin
-        CurrLineNo := LineNo;
+        Rec.SetRange("Line No.", CurrLineNo);
+        if Rec.FindFirst() then;
+        Rec.SetRange("Line No.");
+        CurrPage.SetRecord(Rec);
+    end;
+
+    procedure SetLine(AJECallStackLine: Record "AJE Call Stack Line")
+    begin
+        CurrLineNo := AJECallStackLine."CC Line No.";
+        GoToCurrLineNo();
     end;
 
     local procedure SetStyle()
