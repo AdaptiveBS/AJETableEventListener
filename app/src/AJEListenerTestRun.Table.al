@@ -12,7 +12,7 @@ table 50100 "AJE Listener Test Run"
             Caption = 'Config. Package Code';
             TableRelation = "Config. Package".Code where("AJE Test Result" = const(true));
         }
-        field(3; Description; Text[50])
+        field(3; Description; Text[250])
         {
             Caption = 'Description';
         }
@@ -189,7 +189,7 @@ table 50100 "AJE Listener Test Run"
         Validate("Config. Package Code", TestMethodLine."AJE Config. Pack Code");
         Validate("Codeunit ID", TestMethodLine."Test Codeunit");
         "Function Name" := TestMethodLine.Function;
-        Description := StrSubstNo(TestDescrLbl, "Codeunit ID", "Function Name");
+        Description := CopyStr(StrSubstNo(TestDescrLbl, "Codeunit ID", "Function Name"), 1, MaxStrLen(Description));
         Insert(true);
 
         exit("No.");
