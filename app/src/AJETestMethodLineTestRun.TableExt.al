@@ -4,6 +4,7 @@ tableextension 50103 AJETestMethodLineTestRun extends "Test Method Line"
     {
         field(50100; "AJE Config. Pack Code"; Code[20])
         {
+            DataClassification = CustomerContent;
             Caption = 'Config. Pack Code';
             TableRelation = "Config. Package" where("AJE Test Result" = const(true));
 
@@ -15,11 +16,13 @@ tableextension 50103 AJETestMethodLineTestRun extends "Test Method Line"
         }
         field(50101; "AJE Test Run No."; Integer)
         {
+            DataClassification = CustomerContent;
             Caption = 'Latest Test Run No.';
             TableRelation = "AJE Listener Test Run";
         }
         field(50102; "AJE All Tables"; Boolean)
         {
+            DataClassification = CustomerContent;
             Caption = 'All Tables';
 
             trigger OnValidate()

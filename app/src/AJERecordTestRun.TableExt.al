@@ -4,30 +4,37 @@ tableextension 50102 AJERecordTestRun extends "Config. Package Record"
     {
         field(50100; "AJE Listener Test Run No."; Integer)
         {
+            DataClassification = CustomerContent;
+
             Caption = 'Listener Test Run No.';
             Editable = false;
             TableRelation = "AJE Listener Test Run"."No.";
         }
         field(50101; "AJE Event Type"; Enum "AJE Listener Event Type")
         {
+            DataClassification = CustomerContent;
             Caption = 'Event Type';
             Editable = false;
         }
         field(50102; "AJE Record ID"; RecordId)
         {
+            DataClassification = CustomerContent;
             Caption = 'Record ID';
             Editable = false;
         }
         field(50103; "AJE Call Stack"; Blob)
         {
+            DataClassification = CustomerContent;
             Caption = 'Call Stack';
         }
         field(50104; "AJE Created DateTime"; DateTime)
         {
+            DataClassification = CustomerContent;
             Caption = 'Created DateTime';
         }
         field(50105; "AJE Temporary"; Boolean)
         {
+            DataClassification = CustomerContent;
             Caption = 'Temporary';
         }
     }

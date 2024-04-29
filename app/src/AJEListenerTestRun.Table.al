@@ -4,16 +4,19 @@ table 50100 "AJE Listener Test Run"
     {
         field(1; "No."; Integer)
         {
+            DataClassification = CustomerContent;
             AutoIncrement = true;
             Caption = 'No.';
         }
         field(2; "Config. Package Code"; Code[20])
         {
+            DataClassification = CustomerContent;
             Caption = 'Config. Package Code';
             TableRelation = "Config. Package".Code where("AJE Test Result" = const(true));
         }
         field(3; Description; Text[250])
         {
+            DataClassification = CustomerContent;
             Caption = 'Description';
         }
         field(4; "User ID"; Code[50])
@@ -24,12 +27,14 @@ table 50100 "AJE Listener Test Run"
         }
         field(5; Result; Option)
         {
+            DataClassification = CustomerContent;
             Caption = 'Result';
             OptionCaption = ' ,Failure,Success,Skipped';
             OptionMembers = " ",Failure,Success,Skipped;
         }
         field(6; "Codeunit ID"; Integer)
         {
+            DataClassification = CustomerContent;
             Caption = 'Codeunit ID';
 
             trigger OnValidate()
@@ -39,35 +44,43 @@ table 50100 "AJE Listener Test Run"
         }
         field(7; "Codeunit Name"; Text[30])
         {
+            DataClassification = CustomerContent;
             Caption = 'Codeunit Name';
         }
         field(8; "Function Name"; Text[128])
         {
+            DataClassification = CustomerContent;
             Caption = 'Function Name';
         }
         field(9; "Error Message"; Blob)
         {
+            DataClassification = CustomerContent;
             Caption = 'Error Message';
         }
         field(10; "Error Call Stack"; Blob)
         {
+            DataClassification = CustomerContent;
             Caption = 'Error Call Stack';
             Compressed = false;
         }
         field(11; "Execution Time"; Duration)
         {
+            DataClassification = CustomerContent;
             Caption = 'Execution Time';
         }
         field(12; "Start Time"; DateTime)
         {
+            DataClassification = CustomerContent;
             Caption = 'Start Time';
         }
         field(13; "Finish Time"; DateTime)
         {
+            DataClassification = CustomerContent;
             Caption = 'Finish Time';
         }
         field(14; Manual; Boolean)
         {
+            DataClassification = CustomerContent;
             Caption = 'Manual';
 
             trigger OnValidate()
@@ -80,6 +93,7 @@ table 50100 "AJE Listener Test Run"
         }
         field(15; "All Tables"; Boolean)
         {
+            DataClassification = CustomerContent;
             Caption = 'All Tables';
 
             trigger OnValidate()
@@ -90,6 +104,7 @@ table 50100 "AJE Listener Test Run"
         }
         field(16; Status; Enum "AJE Listener Test Run Status")
         {
+            DataClassification = CustomerContent;
             Caption = 'Status';
             Editable = false;
         }

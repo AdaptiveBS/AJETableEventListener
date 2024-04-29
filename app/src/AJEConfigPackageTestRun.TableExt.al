@@ -4,6 +4,7 @@ tableextension 50100 AJEConfigPackageTestRun extends "Config. Package"
     {
         field(50100; "AJE Test Result"; Boolean)
         {
+            DataClassification = CustomerContent;
             Caption = 'Test Result';
         }
     }
