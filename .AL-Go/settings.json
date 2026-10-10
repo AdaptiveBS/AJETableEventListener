@@ -1,6 +1,6 @@
 {
+  "$schema": "https://raw.githubusercontent.com/microsoft/AL-Go-Actions/v10.0/.Modules/settings.schema.json",
   "country": "us",
-  "artifact": "https://bcartifacts.azureedge.net/sandbox/23.2.14098.14755/us",
   "AppSourceCopMandatoryAffixes": [
     "AJE"
   ],
