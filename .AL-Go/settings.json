@@ -1,6 +1,9 @@
 {
+  "$schema": "https://raw.githubusercontent.com/microsoft/AL-Go-Actions/v10.0/.Modules/settings.schema.json",
+  "preprocessorSymbols": [],
   "country": "us",
-  "artifact": "https://bcartifacts.azureedge.net/sandbox/23.2.14098.14755/us",
+  "shell": "pwsh",
+  "artifact": "https://bcartifacts-exdbf9fwegejdqak.b02.azurefd.net/sandbox/27.5.46862.52969/us",
   "AppSourceCopMandatoryAffixes": [
     "AJE"
   ],
