@@ -1,5 +1,14 @@
 {
   "$schema": "https://raw.githubusercontent.com/microsoft/AL-Go-Actions/v10.0/.Modules/settings.schema.json",
   "type": "PTE",
+  "repoVersion": "1.0",
+  "versioningStrategy": 16,
+  "incrementalBuilds": {
+    "onPush": false,
+    "onPull_Request": false,
+    "onSchedule": false,
+    "retentionDays": 30,
+    "mode": "modifiedApps"
+  },
   "templateUrl": "https://github.com/microsoft/AL-Go-PTE@main"
 }
