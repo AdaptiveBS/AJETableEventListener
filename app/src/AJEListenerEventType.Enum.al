@@ -1,4 +1,4 @@
-enum 50100 "AJE Listener Event Type"
+enum 84000 "AJE Listener Event Type"
 {
     value(0; None)
     {

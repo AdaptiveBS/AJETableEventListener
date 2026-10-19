@@ -1,4 +1,4 @@
-codeunit 50101 "AJE Test Table Event Listener"
+codeunit 84001 "AJE Test Table Event Listener"
 {
     Subtype = Test;
     TestPermissions = Disabled;

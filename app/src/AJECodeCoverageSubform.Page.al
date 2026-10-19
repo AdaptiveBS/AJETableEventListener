@@ -1,4 +1,4 @@
-page 50108 "AJE Code Coverage Subform"
+page 84008 "AJE Code Coverage Subform"
 {
     ApplicationArea = All;
     Caption = 'Code Coverage';

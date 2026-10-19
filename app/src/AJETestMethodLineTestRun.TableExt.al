@@ -1,8 +1,8 @@
-tableextension 50103 AJETestMethodLineTestRun extends "Test Method Line"
+tableextension 84003 AJETestMethodLineTestRun extends "Test Method Line"
 {
     fields
     {
-        field(50100; "AJE Config. Pack Code"; Code[20])
+        field(84000; "AJE Config. Pack Code"; Code[20])
         {
             DataClassification = CustomerContent;
             Caption = 'Config. Pack Code';
@@ -14,13 +14,13 @@ tableextension 50103 AJETestMethodLineTestRun extends "Test Method Line"
                     UpdateChildrenPackCode(Rec);
             end;
         }
-        field(50101; "AJE Test Run No."; Integer)
+        field(84001; "AJE Test Run No."; Integer)
         {
             DataClassification = CustomerContent;
             Caption = 'Latest Test Run No.';
             TableRelation = "AJE Listener Test Run";
         }
-        field(50102; "AJE All Tables"; Boolean)
+        field(84002; "AJE All Tables"; Boolean)
         {
             DataClassification = CustomerContent;
             Caption = 'All Tables';

@@ -1,4 +1,4 @@
-pageextension 50101 AJETestToolRedirect extends "CAL Test Tool"
+pageextension 84001 AJETestToolRedirect extends "CAL Test Tool"
 {
     trigger OnOpenPage()
     begin

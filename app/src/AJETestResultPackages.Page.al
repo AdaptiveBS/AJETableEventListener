@@ -1,4 +1,4 @@
-page 50103 "AJE Test Result Packages"
+page 84003 "AJE Test Result Packages"
 {
     AdditionalSearchTerms = 'test result setup packages';
     ApplicationArea = All;

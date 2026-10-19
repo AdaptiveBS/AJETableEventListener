@@ -1,7 +1,7 @@
 /// <summary>
-/// permissionset TableEventListener (ID 50100).
+/// permissionset TableEventListener (ID 84000).
 /// </summary>
-permissionset 50100 AJETableEvtListener
+permissionset 84000 AJETableEvtListener
 {
     Assignable = true;
     Caption = 'AJE Table Event Listener', MaxLength = 30;

@@ -1,7 +1,7 @@
 /// <summary>
-/// Codeunit AJE Table Event Listener (ID 50100).
+/// Codeunit AJE Table Event Listener (ID 84000).
 /// </summary>
-codeunit 50100 "AJE Table Event Listener"
+codeunit 84000 "AJE Table Event Listener"
 {
     EventSubscriberInstance = Manual;
     SingleInstance = true;

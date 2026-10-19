@@ -1,4 +1,4 @@
-page 50102 "AJE Config. Pack Rec. Subform"
+page 84002 "AJE Config. Pack Rec. Subform"
 {
     Caption = 'Records';
     DelayedInsert = true;

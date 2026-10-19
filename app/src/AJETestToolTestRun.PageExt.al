@@ -1,4 +1,4 @@
-pageextension 50100 AJETestToolTestRun extends "AL Test Tool"
+pageextension 84000 AJETestToolTestRun extends "AL Test Tool"
 {
     layout
     {
