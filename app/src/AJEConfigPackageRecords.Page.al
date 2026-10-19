@@ -1,4 +1,4 @@
-page 50106 "AJE Config. Package Records"
+page 84006 "AJE Config. Package Records"
 {
     Caption = 'Test Run Records';
     DataCaptionExpression = FormCaption;

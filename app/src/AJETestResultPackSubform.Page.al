@@ -1,4 +1,4 @@
-page 50105 "AJE Test Result Pack Subform"
+page 84005 "AJE Test Result Pack Subform"
 {
     Caption = 'Tables';
     DelayedInsert = true;

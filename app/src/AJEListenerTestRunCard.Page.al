@@ -1,4 +1,4 @@
-page 50101 "AJE Listener Test Run Card"
+page 84001 "AJE Listener Test Run Card"
 {
     AdditionalSearchTerms = 'test result run listener card';
     ApplicationArea = All;

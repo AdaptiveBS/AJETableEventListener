@@ -1,4 +1,4 @@
-page 50107 "AJE Call Stack"
+page 84007 "AJE Call Stack"
 {
     ApplicationArea = All;
     Caption = 'Call Stack';

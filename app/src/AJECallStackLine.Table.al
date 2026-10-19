@@ -1,4 +1,4 @@
-table 50107 "AJE Call Stack Line"
+table 84007 "AJE Call Stack Line"
 {
     TableType = Temporary;
 

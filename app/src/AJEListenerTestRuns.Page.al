@@ -1,4 +1,4 @@
-page 50100 "AJE Listener Test Runs"
+page 84000 "AJE Listener Test Runs"
 {
     AdditionalSearchTerms = 'test result run listener';
     ApplicationArea = All;

@@ -1,23 +1,23 @@
-tableextension 50101 AJETableTriggerSetup extends "Config. Package Table"
+tableextension 84001 AJETableTriggerSetup extends "Config. Package Table"
 {
     fields
     {
-        field(50100; "AJE Rename"; Boolean)
+        field(84000; "AJE Rename"; Boolean)
         {
             DataClassification = CustomerContent;
             Caption = 'Rename';
         }
-        field(50101; "AJE Insert"; Boolean)
+        field(84001; "AJE Insert"; Boolean)
         {
             DataClassification = CustomerContent;
             Caption = 'Insert';
         }
-        field(50102; "AJE Modify"; Boolean)
+        field(84002; "AJE Modify"; Boolean)
         {
             DataClassification = CustomerContent;
             Caption = 'Modify';
         }
-        field(50103; "AJE Delete"; Boolean)
+        field(84003; "AJE Delete"; Boolean)
         {
             DataClassification = CustomerContent;
             Caption = 'Delete';

@@ -1,4 +1,4 @@
-enum 50101 "AJE Listener Test Run Status"
+enum 84001 "AJE Listener Test Run Status"
 {
     Extensible = true;
 
